@@ -59,7 +59,7 @@ export function RepaymentForm() {
           amount: Number(formData.amount),
           cardNo: formData.cardNo,
           customerId: formData.customerId,
-          seasonId: currentSeason.id,
+          seasonId: currentSeason._id,
           paymentDate: formData.paymentDate,
         }),
       ).unwrap()
@@ -97,7 +97,7 @@ export function RepaymentForm() {
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle>Add Repayment</DialogTitle>
-          <DialogDescription>Record a new repayment for the current season: {currentSeason?.name}</DialogDescription>
+          <DialogDescription>Record a new repayment for the current season: {currentSeason?.season}</DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">

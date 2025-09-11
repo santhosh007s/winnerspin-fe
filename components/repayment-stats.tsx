@@ -10,7 +10,7 @@ export function RepaymentStats() {
 
   // Filter repayments by current season
   const seasonRepayments = currentSeason
-    ? repayments.filter((repayment) => repayment.seasonId === currentSeason.id)
+    ? repayments.filter((repayment) => repayment.seasonId === currentSeason._id)
     : repayments
 
   // Calculate stats
@@ -27,7 +27,7 @@ export function RepaymentStats() {
       title: "Total Repayments",
       value: totalRepayments,
       icon: CreditCard,
-      description: currentSeason ? `In ${currentSeason.name}` : "All seasons",
+      description: currentSeason ? `In ${currentSeason.season}` : "All seasons",
     },
     {
       title: "Total Amount",

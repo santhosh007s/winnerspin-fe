@@ -38,7 +38,7 @@ export const fetchWithdrawals = createAsyncThunk("withdrawal/fetchWithdrawals", 
 
 export const requestWithdrawal = createAsyncThunk(
   "withdrawal/requestWithdrawal",
-  async (amount: number, { getState }) => {
+  async (amount: number, { rejectWithValue, getState }) => {
     const state = getState() as { auth: { token: string } }
     const response = await fetch("http://127.0.0.1:3000/promoter/request-withdrawal", {
       method: "POST",
@@ -49,11 +49,12 @@ export const requestWithdrawal = createAsyncThunk(
       body: JSON.stringify({ amount }),
     })
 
+    const data = await response.json()
     if (!response.ok) {
-      throw new Error("Failed to request withdrawal")
+      
+      throw new Error(data.message || "Server error")
     }
 
-    const data = await response.json()
     return data
   },
 )
@@ -86,11 +87,12 @@ const withdrawalSlice = createSlice({
       })
       .addCase(requestWithdrawal.fulfilled, (state) => {
         state.isLoading = false
+
         // Refresh withdrawals list would be handled by refetching
       })
       .addCase(requestWithdrawal.rejected, (state, action) => {
         state.isLoading = false
-        state.error = action.error.message || "Failed to request withdrawal"
+        state.error = action.error.message || "Failed  withdrawal"
       })
   },
 })

@@ -1,5 +1,5 @@
 "use client"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import type React from "react"
 
 import { useDispatch, useSelector } from "react-redux"
@@ -16,17 +16,25 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { ArrowDownToLine } from "lucide-react"
-import { requestWithdrawal } from "@/lib/withdrawalSlice"
+import { fetchWithdrawals, requestWithdrawal } from "@/lib/withdrawalSlice"
 import { fetchEarnings } from "@/lib/walletSlice"
 import type { AppDispatch, RootState } from "@/lib/store"
+import { fetchSeasons } from "@/lib/seasonSlice"
+import { fetchPromoterProfile } from "@/lib/authSlice"
 
-export function WithdrawalRequestForm() {
+export function WithdrawalRequestForm({ hasPendingWithdrawal }: { hasPendingWithdrawal: boolean }) {
   const [open, setOpen] = useState(false)
   const [amount, setAmount] = useState("")
 
   const dispatch = useDispatch<AppDispatch>()
-  const { earnings, paymentDetails } = useSelector((state: RootState) => state.wallet)
+  const { earnings } = useSelector((state: RootState) => state.wallet)
+  const { details: paymentDetails } = useSelector((state: RootState) => state.payment)
   const { isLoading, error } = useSelector((state: RootState) => state.withdrawal)
+  const { currentSeason } = useSelector((state: RootState) => state.season)
+
+  useEffect(() => {
+    if(!currentSeason) dispatch(fetchSeasons())
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -45,17 +53,20 @@ export function WithdrawalRequestForm() {
       setAmount("")
       setOpen(false)
       // Refresh earnings
-      dispatch(fetchEarnings())
+
+      dispatch(fetchEarnings(currentSeason._id))
+      dispatch(fetchWithdrawals())
+      dispatch(fetchPromoterProfile())
     } catch (error) {
       // Error handled by Redux
     }
   }
 
-  if (!paymentDetails) {
+  if (!paymentDetails || hasPendingWithdrawal) {
     return (
-      <Button disabled className="gap-2">
+      <Button disabled={true} className="gap-2">
         <ArrowDownToLine className="h-4 w-4" />
-        Add Payment Details First
+        {hasPendingWithdrawal ? "Pending Request Exists" : "Add Payment Details First"}
       </Button>
     )
   }
@@ -63,9 +74,9 @@ export function WithdrawalRequestForm() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="gap-2">
+        <Button className="gap-2" disabled={hasPendingWithdrawal}>
           <ArrowDownToLine className="h-4 w-4" />
-          Request Withdrawal
+          {hasPendingWithdrawal ? "Pending Request Exists" : "Request Withdrawal"}
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-md">
@@ -105,9 +116,9 @@ export function WithdrawalRequestForm() {
 
           <div className="p-4 bg-card border rounded-lg">
             <p className="text-sm font-medium mb-2">Withdrawal will be sent to:</p>
-            <p className="text-sm text-muted-foreground">{paymentDetails.accountHolderName}</p>
+            <p className="text-sm text-muted-foreground">{paymentDetails.accHolderName}</p>
             <p className="text-sm text-muted-foreground">{paymentDetails.bankName}</p>
-            <p className="text-sm text-muted-foreground">****{paymentDetails.accountNumber.slice(-4)}</p>
+            <p className="text-sm text-muted-foreground">****{paymentDetails.accNo.slice(-4)}</p>
           </div>
 
           <div className="flex gap-2 pt-4">

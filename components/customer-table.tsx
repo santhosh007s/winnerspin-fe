@@ -8,13 +8,16 @@ import { Button } from "@/components/ui/button"
 import { Eye } from "lucide-react"
 import { fetchCustomers } from "@/lib/customerSlice"
 import type { AppDispatch, RootState } from "@/lib/store"
+import { fetchSeasons } from "@/lib/seasonSlice"
 
 export function CustomerTable() {
   const dispatch = useDispatch<AppDispatch>()
-  const { customers, isLoading } = useSelector((state: RootState) => state.customer)
 
+  const { customers, isLoading } = useSelector((state: RootState) => state.customer)
+  const { currentSeason } = useSelector((state: RootState) => state.season)
   useEffect(() => {
     dispatch(fetchCustomers())
+    if(!currentSeason) dispatch(fetchSeasons())
   }, [dispatch])
 
   if (isLoading) {
@@ -69,13 +72,19 @@ export function CustomerTable() {
                     <TableCell>{customer.cardNo}</TableCell>
                     <TableCell>{customer.city}</TableCell>
                     <TableCell>₹{customer.firstPayment.toLocaleString()}</TableCell>
-                    <TableCell>
-                      <Link href={`/promoter/customers/${customer.id}`}>
-                        <Button variant="outline" size="sm" className="gap-2 bg-transparent">
-                          <Eye className="h-3 w-3" />
-                          View
-                        </Button>
-                      </Link>
+                    <TableCell className="flex gap-2">
+                      <Button asChild variant="outline" size="sm" className="gap-2 bg-transparent">
+                        <Link href={`/promoter/customers/${customer._id}`}>
+                            <Eye className="h-3 w-3" />
+                            View
+                        </Link>
+                      </Button>
+                      {/* <Button asChild variant="outline" size="sm" className="gap-2 bg-transparent">
+                        <Link href={`/promoter/customers/${customer._id}`}>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-file-pen-line"><path d="m18 5-3-3H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2Z"/><path d="M8 18h1"/><path d="M18.4 9.6a2 2 0 1 1 3 3L17 17l-4 1 1-4Z"/></svg>
+                            Edit
+                        </Link>
+                      </Button> */}
                     </TableCell>
                   </TableRow>
                 ))}

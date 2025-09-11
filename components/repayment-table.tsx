@@ -18,7 +18,7 @@ export function RepaymentTable() {
 
   // Filter repayments by current season if available
   const filteredRepayments = currentSeason
-    ? repayments.filter((repayment) => repayment.seasonId === currentSeason.id)
+    ? repayments.filter((repayment) => repayment.seasonId === currentSeason._id)
     : repayments
 
   if (isLoading) {
@@ -44,7 +44,7 @@ export function RepaymentTable() {
       <CardHeader>
         <CardTitle>Repayments</CardTitle>
         <CardDescription>
-          {currentSeason ? `Repayments for ${currentSeason.name}` : "All repayments across seasons"}
+          {currentSeason ? `Repayments for ${currentSeason.season}` : "All repayments across seasons"}
         </CardDescription>
       </CardHeader>
       <CardContent>

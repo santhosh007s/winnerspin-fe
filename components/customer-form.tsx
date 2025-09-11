@@ -32,7 +32,7 @@ export function CustomerForm() {
     address: "",
     pincode: "",
     firstPayment: "",
-    paymentDate: "",
+    paymentDate: ""
   })
   
   const dispatch = useDispatch<AppDispatch>()
@@ -41,16 +41,17 @@ export function CustomerForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    console.log("Creating Customer ...", formData);
+    console.log("currentSeason", currentSeason);
     if (!currentSeason) {
       return
     }
-    
     try {
       await dispatch(
         createCustomer({
           ...formData,
           firstPayment: Number(formData.firstPayment),
-          seasonId: currentSeason.id,
+          seasonId: currentSeason._id,
         }),
       ).unwrap()
 
@@ -92,7 +93,7 @@ export function CustomerForm() {
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Add New Customer</DialogTitle>
-          <DialogDescription>Create a new customer for the current season: {currentSeason?.name}</DialogDescription>
+          <DialogDescription>Create a new customer for the current season: {currentSeason?.season}</DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">

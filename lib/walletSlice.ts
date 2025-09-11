@@ -1,29 +1,29 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit"
 
-interface PaymentDetails {
-  bankName: string
-  accountNumber: string
-  ifscCode: string
-  accountHolderName: string
+interface Transaction {
+  _id: string
+  customer: string // Assuming customer ID, can be populated if needed
+  amount: number
+  createdAt: string
 }
 
 interface WalletState {
   earnings: number
-  paymentDetails: PaymentDetails | null
+  transactions: Transaction[]
   isLoading: boolean
   error: string | null
 }
 
 const initialState: WalletState = {
   earnings: 0,
-  paymentDetails: null,
+  transactions: [],
   isLoading: false,
   error: null,
 }
 
-export const fetchEarnings = createAsyncThunk("wallet/fetchEarnings", async (_, { getState }) => {
+export const fetchEarnings = createAsyncThunk("wallet/fetchEarnings", async (seasonId: string, { getState }) => {
   const state = getState() as { auth: { token: string } }
-  const response = await fetch("http://127.0.0.1:3000/promoter/earnings", {
+  const response = await fetch(`http://127.0.0.1:3000/promoter/all-earnings?seasonId=${seasonId}`, {
     headers: {
       token: state.auth.token,
     },
@@ -34,30 +34,8 @@ export const fetchEarnings = createAsyncThunk("wallet/fetchEarnings", async (_, 
   }
 
   const data = await response.json()
-  return data.earnings
+  return data // Return the whole object { earnings, transactions }
 })
-
-export const addPaymentDetails = createAsyncThunk(
-  "wallet/addPaymentDetails",
-  async (paymentDetails: PaymentDetails, { getState }) => {
-    const state = getState() as { auth: { token: string } }
-    const response = await fetch("http://127.0.0.1:3000/promoter/add-payment-details", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        token: state.auth.token,
-      },
-      body: JSON.stringify(paymentDetails),
-    })
-
-    if (!response.ok) {
-      throw new Error("Failed to add payment details")
-    }
-
-    const data = await response.json()
-    return paymentDetails
-  },
-)
 
 const walletSlice = createSlice({
   name: "wallet",
@@ -75,23 +53,12 @@ const walletSlice = createSlice({
       })
       .addCase(fetchEarnings.fulfilled, (state, action) => {
         state.isLoading = false
-        state.earnings = action.payload
+        state.earnings = action.payload.earnings
+        state.transactions = action.payload.transactions
       })
       .addCase(fetchEarnings.rejected, (state, action) => {
         state.isLoading = false
         state.error = action.error.message || "Failed to fetch earnings"
-      })
-      .addCase(addPaymentDetails.pending, (state) => {
-        state.isLoading = true
-        state.error = null
-      })
-      .addCase(addPaymentDetails.fulfilled, (state, action) => {
-        state.isLoading = false
-        state.paymentDetails = action.payload
-      })
-      .addCase(addPaymentDetails.rejected, (state, action) => {
-        state.isLoading = false
-        state.error = action.error.message || "Failed to add payment details"
       })
   },
 })

@@ -11,7 +11,7 @@ export function StatsCards() {
   const isApproved = user?.status === "approved"
 
   const seasonRepayments = currentSeason
-    ? repayments.filter((repayment) => repayment.seasonId === currentSeason.id)
+    ? repayments.filter((repayment) => repayment.seasonId === currentSeason._id)
     : repayments
 
   const stats = [
@@ -25,7 +25,7 @@ export function StatsCards() {
       title: "Repayments",
       value: seasonRepayments.length,
       icon: CreditCard,
-      description: currentSeason ? `In ${currentSeason.name}` : "All seasons",
+      description: currentSeason ? `In ${currentSeason.season}` : "All seasons",
     },
   ]
 

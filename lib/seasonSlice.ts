@@ -1,8 +1,9 @@
 import { createSlice, createAsyncThunk, type PayloadAction } from "@reduxjs/toolkit"
 
 interface Season {
-  id: string
-  name: string
+
+  _id: string
+  season: string
   amount: number
   duration: string
 }
@@ -34,7 +35,7 @@ export const fetchSeasons = createAsyncThunk("season/fetchSeasons", async (_, { 
   }
 
   const data = await response.json()
-  return data.seasons
+  return data // Return the whole payload
 })
 
 const seasonSlice = createSlice({
@@ -51,14 +52,12 @@ const seasonSlice = createSlice({
         state.isLoading = true
         state.error = null
       })
-      .addCase(fetchSeasons.fulfilled, (state, action) => {
+      .addCase(fetchSeasons.fulfilled, (state, action: PayloadAction<{ seasons: Season[], curSeason: Season }>) => {
         state.isLoading = false
-        state.seasons = action.payload
-        if (!state.currentSeason && action.payload.length > 0) {
-          state.currentSeason = action.payload[0]
-        }
+        state.seasons = action.payload.seasons
+        state.currentSeason = action.payload.curSeason
       })
-      .addCase(fetchSeasons.rejected, (state, action) => {
+      .addCase(fetchSeasons.rejected, (state, action) => {  
         state.isLoading = false
         state.error = action.error.message || "Failed to fetch seasons"
       })

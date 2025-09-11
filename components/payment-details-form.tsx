@@ -1,5 +1,5 @@
 "use client"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import type React from "react"
 
 import { useDispatch, useSelector } from "react-redux"
@@ -15,21 +15,25 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { CreditCard } from "lucide-react"
-import { addPaymentDetails } from "@/lib/walletSlice"
+import { CreditCard, Loader2 } from "lucide-react"
+import { addPaymentDetails } from "@/lib/paymentSlice"
 import type { AppDispatch, RootState } from "@/lib/store"
 
 export function PaymentDetailsForm() {
   const [open, setOpen] = useState(false)
   const [formData, setFormData] = useState({
     bankName: "",
-    accountNumber: "",
+    accNo: "",
     ifscCode: "",
-    accountHolderName: "",
+    accHolderName: "",
+    upiId: "",
+    branch: "",
+    branchAdress: "",
   })
 
   const dispatch = useDispatch<AppDispatch>()
-  const { isLoading, error, paymentDetails } = useSelector((state: RootState) => state.wallet)
+  const [ifscLoading, setIfscLoading] = useState(false)
+  const { isLoading, error, details: paymentDetails } = useSelector((state: RootState) => state.payment)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -45,6 +49,41 @@ export function PaymentDetailsForm() {
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
   }
+
+  // Pre-fill form when editing existing details
+  useEffect(() => {
+    if (paymentDetails && open) {
+      setFormData({
+        accHolderName: paymentDetails.accHolderName || "",
+        accNo: paymentDetails.accNo || "",
+        bankName: paymentDetails.bankName || "",
+        ifscCode: paymentDetails.ifscCode || "",
+        branch: paymentDetails.branch || "",
+        branchAdress: paymentDetails.branchAdress || "",
+        upiId: paymentDetails.upiId || "",
+      })
+    }
+  }, [paymentDetails, open]) // Rerun when dialog opens
+
+  // Fetch bank details from IFSC code
+  useEffect(() => {
+    const fetchBankDetails = async () => {
+      if (formData.ifscCode.length === 11) {
+        setIfscLoading(true)
+        try {
+          const response = await fetch(`https://ifsc.razorpay.com/${formData.ifscCode}`)
+          const data = await response.json()
+          setFormData((prev) => ({ ...prev, bankName: data.BANK, branch: data.BRANCH, branchAdress: data.ADDRESS }))
+        } catch (err) {
+          console.error("Failed to fetch IFSC details", err)
+          // Optionally clear fields or show an error
+        } finally {
+          setIfscLoading(false)
+        }
+      }
+    }
+    fetchBankDetails()
+  }, [formData.ifscCode])
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -71,8 +110,8 @@ export function PaymentDetailsForm() {
             <Label htmlFor="accountHolderName">Account Holder Name</Label>
             <Input
               id="accountHolderName"
-              value={formData.accountHolderName}
-              onChange={(e) => handleInputChange("accountHolderName", e.target.value)}
+              value={formData.accHolderName}
+              onChange={(e) => handleInputChange("accHolderName", e.target.value)}
               placeholder="Enter account holder name"
               required
             />
@@ -82,19 +121,21 @@ export function PaymentDetailsForm() {
             <Label htmlFor="bankName">Bank Name</Label>
             <Input
               id="bankName"
+              readOnly
               value={formData.bankName}
               onChange={(e) => handleInputChange("bankName", e.target.value)}
-              placeholder="Enter bank name"
+              placeholder="Auto-filled from IFSC"
               required
+              className="bg-muted"
             />
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="accountNumber">Account Number</Label>
             <Input
-              id="accountNumber"
-              value={formData.accountNumber}
-              onChange={(e) => handleInputChange("accountNumber", e.target.value)}
+              id="accNo"
+              value={formData.accNo}
+              onChange={(e) => handleInputChange("accNo", e.target.value)}
               placeholder="Enter account number"
               required
             />
@@ -104,16 +145,52 @@ export function PaymentDetailsForm() {
             <Label htmlFor="ifscCode">IFSC Code</Label>
             <Input
               id="ifscCode"
+              maxLength={11}
               value={formData.ifscCode}
-              onChange={(e) => handleInputChange("ifscCode", e.target.value)}
+              onChange={(e) => handleInputChange("ifscCode", e.target.value.toUpperCase())}
               placeholder="Enter IFSC code"
               required
+            />
+            {ifscLoading && <p className="text-xs text-muted-foreground">Fetching bank details...</p>}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="branch">Branch</Label>
+            <Input
+              id="branch"
+              value={formData.branch}
+              readOnly
+              onChange={(e) => handleInputChange("branch", e.target.value)}
+              placeholder="Auto-filled from IFSC"
+              className="bg-muted"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="branchAdress">Branch Address</Label>
+            <Input
+              readOnly
+              id="branchAdress"
+              value={formData.branchAdress}
+              onChange={(e) => handleInputChange("branchAdress", e.target.value)}
+              placeholder="Auto-filled from IFSC"
+              className="bg-muted"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="upiId">UPI ID (Optional)</Label>
+            <Input
+              id="upiId"
+              value={formData.upiId}
+              onChange={(e) => handleInputChange("upiId", e.target.value)}
+              placeholder="Enter UPI ID"
             />
           </div>
 
           <div className="flex gap-2 pt-4">
             <Button type="submit" disabled={isLoading}>
-              {isLoading ? "Saving..." : "Save Details"}
+              {isLoading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Saving...</> : "Save Details"}
             </Button>
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>
               Cancel

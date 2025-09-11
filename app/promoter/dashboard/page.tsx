@@ -31,7 +31,7 @@ export default function PromoterDashboard() {
             <div className="grid gap-4 md:grid-cols-3">
               <div>
                 <p className="text-sm font-medium text-muted-foreground">Season</p>
-                <p className="text-lg font-semibold text-primary">{currentSeason.name}</p>
+                <p className="text-lg font-semibold text-primary">{currentSeason.season}</p>
               </div>
               <div>
                 <p className="text-sm font-medium text-muted-foreground">Amount</p>

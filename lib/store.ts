@@ -5,6 +5,7 @@ import customerSlice from "./customerSlice"
 import repaymentSlice from "./repaymentSlice"
 import walletSlice from "./walletSlice"
 import withdrawalSlice from "./withdrawalSlice"
+import paymentReducer from "./paymentSlice"
 
 export const store = configureStore({
   reducer: {
@@ -14,6 +15,7 @@ export const store = configureStore({
     repayment: repaymentSlice,
     wallet: walletSlice,
     withdrawal: withdrawalSlice,
+    payment: paymentReducer,
   },
 })
 
