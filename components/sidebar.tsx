@@ -14,7 +14,6 @@ const navigation = [
   { name: "Customers", href: "/promoter/customers", icon: Users },
   { name: "Repayments", href: "/promoter/repayments", icon: CreditCard },
   { name: "Wallet", href: "/promoter/wallet", icon: Wallet, requiresApproval: true },
-  { name: "Withdrawals", href: "/promoter/withdrawals", icon: ArrowDownToLine, requiresApproval: true },
   { name: "Profile", href: "/promoter/profile", icon: User },
 ]
 

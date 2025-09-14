@@ -1,5 +1,6 @@
 "use client"
 import { useState, useEffect } from "react"
+import { Check, ChevronsUpDown } from "lucide-react"
 import type React from "react"
 
 import { useDispatch, useSelector } from "react-redux"
@@ -12,14 +13,16 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Plus } from "lucide-react"
 import { addRepayment, fetchRepayments } from "@/lib/repaymentSlice"
 import { fetchCustomers } from "@/lib/customerSlice"
 import type { AppDispatch, RootState } from "@/lib/store"
+import { cn } from "@/lib/utils"
 
 export function RepaymentForm() {
   const [open, setOpen] = useState(false)
@@ -29,6 +32,7 @@ export function RepaymentForm() {
     customerId: "",
     paymentDate: "",
   })
+  const [popoverOpen, setPopoverOpen] = useState(false)
 
   const dispatch = useDispatch<AppDispatch>()
   const { currentSeason } = useSelector((state: RootState) => state.season)
@@ -37,7 +41,7 @@ export function RepaymentForm() {
 
   useEffect(() => {
     if (open) {
-      dispatch(fetchCustomers())
+      !customers.length && dispatch(fetchCustomers())
     }
   }, [open, dispatch])
 
@@ -56,11 +60,9 @@ export function RepaymentForm() {
     try {
       await dispatch(
         addRepayment({
-          amount: Number(formData.amount),
-          cardNo: formData.cardNo,
           customerId: formData.customerId,
           seasonId: currentSeason._id,
-          paymentDate: formData.paymentDate,
+          amount: formData.amount.length > 0 ? Number(formData.amount) : currentSeason.amount,
         }),
       ).unwrap()
 
@@ -81,10 +83,12 @@ export function RepaymentForm() {
   }
 
   const handleInputChange = (field: string, value: string) => {
+    console.log("handleInputChange", field, value)
+    console.log("formData", formData)
     setFormData((prev) => ({ ...prev, [field]: value }))
   }
 
-  const selectedCustomer = customers.find((c) => c.id === formData.customerId)
+  const selectedCustomer = customers.find((c) => c._id === formData.customerId)
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -108,42 +112,39 @@ export function RepaymentForm() {
           )}
 
           <div className="space-y-2">
-            <Label htmlFor="customer">Customer</Label>
-            <Select value={formData.customerId} onValueChange={(value) => handleInputChange("customerId", value)}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select customer" />
-              </SelectTrigger>
-              <SelectContent>
-                {customers.map((customer) => (
-                  <SelectItem key={customer.id} value={customer.id}>
-                    {customer.username} - {customer.cardNo}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="cardNo">Card Number</Label>
-            <Input
-              id="cardNo"
-              value={formData.cardNo}
-              onChange={(e) => handleInputChange("cardNo", e.target.value)}
-              placeholder={selectedCustomer ? selectedCustomer.cardNo : "Enter card number"}
-              required
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="amount">Amount</Label>
-            <Input
-              id="amount"
-              type="number"
-              value={formData.amount}
-              onChange={(e) => handleInputChange("amount", e.target.value)}
-              placeholder={`Default: ₹${currentSeason?.amount || 0}`}
-              required
-            />
+            <Label>Customer</Label>
+            <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
+              <PopoverTrigger asChild>
+                <Button variant="outline" role="combobox" aria-expanded={popoverOpen} className="w-full justify-between">
+                  {selectedCustomer ? `${selectedCustomer.username} - ${selectedCustomer.cardNo}` : "Select customer..."}
+                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-[--radix-popover-trigger-width] p-0">
+                <Command>
+                  <CommandInput placeholder="Search customer by name or card..." />
+                  <CommandEmpty>No customer found.</CommandEmpty>
+                  <CommandGroup>
+                    {customers.map((customer) => (
+                      <CommandItem
+                        key={customer._id}
+                        value={`${customer.username} ${customer.cardNo}`}
+                        onSelect={() => {
+                          handleInputChange("customerId", customer._id)
+                          handleInputChange("cardNo", customer.cardNo)
+                          setPopoverOpen(false)
+                        }}
+                      >
+                        <Check
+                          className={cn("mr-2 h-4 w-4", formData.customerId === customer._id ? "opacity-100" : "opacity-0")}
+                        />
+                        {customer.username} - {customer.cardNo}
+                      </CommandItem>
+                    ))}
+                  </CommandGroup>
+                </Command>
+              </PopoverContent>
+            </Popover>
           </div>
 
           <div className="space-y-2">

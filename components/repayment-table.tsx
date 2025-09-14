@@ -1,27 +1,55 @@
 "use client"
 import { useEffect } from "react"
+import { format } from "date-fns"
 import { useDispatch, useSelector } from "react-redux"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { fetchRepayments } from "@/lib/repaymentSlice"
 import type { AppDispatch, RootState } from "@/lib/store"
+import { AddRepaymentForm } from "./add-repayment-form"
+import { Alert, AlertDescription } from "./ui/alert"
+import { fetchCustomers } from "@/lib/customerSlice"
 
 export function RepaymentTable() {
   const dispatch = useDispatch<AppDispatch>()
-  const { repayments, isLoading } = useSelector((state: RootState) => state.repayment)
-  const { currentSeason } = useSelector((state: RootState) => state.season)
-
+  const {customers} = useSelector((state: RootState) => state.customer)
+  
   useEffect(() => {
+    !customers.length && dispatch(fetchCustomers())
+  }, [])
+  const { repayments, isLoading, error } = useSelector((state: RootState) => state.repayment)
+  const { currentSeason } = useSelector((state: RootState) => state.season)
+  
+  useEffect(() => {
+    if (currentSeason) {
+      dispatch(fetchRepayments())
+    }
+  }, [dispatch, currentSeason])
+
+  const handleRepaymentSuccess = () => {
     dispatch(fetchRepayments())
-  }, [dispatch])
+  }
 
-  // Filter repayments by current season if available
-  const filteredRepayments = currentSeason
-    ? repayments.filter((repayment) => repayment.seasonId === currentSeason._id)
-    : repayments
+  const isLoadingInitial = isLoading && repayments.length === 0
 
-  if (isLoading) {
+  const getMonthHeaders = () => {
+    if (!currentSeason) return []
+    const headers = []
+    const start = new Date(currentSeason.startDate)
+    const end = new Date(currentSeason.endDate)
+
+    let current = start
+    while (current <= end) {
+      headers.push(new Date(current))
+      current.setMonth(current.getMonth() + 1)
+    }
+    return headers
+  }
+
+  const monthHeaders = getMonthHeaders()
+
+  if (isLoadingInitial) {
     return (
       <Card>
         <CardHeader>
@@ -42,15 +70,20 @@ export function RepaymentTable() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Repayments</CardTitle>
+        <CardTitle>Installment Status</CardTitle>
         <CardDescription>
-          {currentSeason ? `Repayments for ${currentSeason.season}` : "All repayments across seasons"}
+          An overview of all customer dues and payments for the current season.
         </CardDescription>
       </CardHeader>
       <CardContent>
-        {filteredRepayments.length === 0 ? (
+        {error && (
+          <Alert variant="destructive">
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
+        {repayments.length === 0 && !isLoading ? (
           <div className="text-center py-8">
-            <p className="text-muted-foreground">No repayments found. Add your first repayment to get started.</p>
+            <p className="text-muted-foreground">No customers found for this season.</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -58,28 +91,48 @@ export function RepaymentTable() {
               <TableHeader>
                 <TableRow>
                   <TableHead>Customer</TableHead>
-                  <TableHead>Card Number</TableHead>
-                  <TableHead>Amount</TableHead>
-                  <TableHead>Payment Date</TableHead>
-                  <TableHead>Season</TableHead>
-                  <TableHead>Status</TableHead>
+                  {monthHeaders.map((month) => (
+                    <TableHead key={month.toISOString()} className="text-center">
+                      {format(month, "MMM yyyy")}
+                    </TableHead>
+                  ))}
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredRepayments.map((repayment) => (
-                  <TableRow key={repayment.id}>
-                    <TableCell className="font-medium">{repayment.customerName || "Unknown"}</TableCell>
-                    <TableCell className="font-mono">{repayment.cardNo}</TableCell>
-                    <TableCell className="font-semibold text-primary">₹{repayment.amount.toLocaleString()}</TableCell>
-                    <TableCell>{new Date(repayment.paymentDate).toLocaleDateString()}</TableCell>
-                    <TableCell>
-                      <Badge variant="secondary">{repayment.seasonId}</Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="default">Completed</Badge>
-                    </TableCell>
-                  </TableRow>
-                ))}
+                {repayments.map((customer) => {
+                  const paidInstallmentNumbers = customer.installments.map((inst) => inst.installmentNo)
+                  const dueInstallments = customer.dues.map((due) => due.installmentNo)
+
+                  return (
+                    <TableRow key={customer.customerId}>
+                      <TableCell className="font-medium">
+                        <div className="font-bold">{customer.customerName}</div>
+                        <div className="text-xs text-muted-foreground">{customer.cardNo}</div>
+                      </TableCell>
+                      {monthHeaders.map((month, index) => {
+                        const installmentNo = index + 1
+                        const isPaid = paidInstallmentNumbers.includes(installmentNo)
+                        const isDue = dueInstallments.includes(installmentNo)
+
+                        return (
+                          <TableCell key={month.toISOString()} className="text-center">
+                            {isPaid ? (
+                              <Badge variant="default">Paid</Badge>
+                            ) : isDue ? (
+                              <AddRepaymentForm
+                                customerId={customer.customerId}
+                                customerName={customer.customerName}
+                                onSuccess={handleRepaymentSuccess}
+                              />
+                            ) : (
+                              <Badge variant="outline">-</Badge>
+                            )}
+                          </TableCell>
+                        )
+                      })}
+                    </TableRow>
+                  )
+                })}
               </TableBody>
             </Table>
           </div>

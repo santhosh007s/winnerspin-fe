@@ -1,18 +1,30 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit"
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit"
+import { RootState } from "./store"
 
-interface Repayment {
-  id: string
-  amount: number
-  cardNo: string
+interface Installment {
+  _id: string
+  installmentNo: number
+  amount: string
+  paymentDate: string
+}
+
+interface Due {
+  installmentNo: number
+  dueDate: string
+  amount: string
+  status: "due"
+}
+
+export interface RepaymentInfo {
   customerId: string
   customerName: string
-  seasonId: string
-  paymentDate: string
-  createdAt: string
+  cardNo: string
+  installments: Installment[]
+  dues: Due[]
 }
 
 interface RepaymentState {
-  repayments: Repayment[]
+  repayments: RepaymentInfo[]
   isLoading: boolean
   error: string | null
 }
@@ -23,89 +35,73 @@ const initialState: RepaymentState = {
   error: null,
 }
 
-export const fetchRepayments = createAsyncThunk("repayment/fetchRepayments", async (_, { getState }) => {
-  const state = getState() as { auth: { token: string } }
-  const response = await fetch("http://127.0.0.1:3000/promoter/all-repayments", {
-    headers: {
-      token: state.auth.token,
-    },
-  })
-
-  if (!response.ok) {
-    throw new Error("Failed to fetch repayments")
+export const fetchRepayments = createAsyncThunk("repayment/fetchRepayments", async (_, { getState, rejectWithValue }) => {
+  const state = getState() as RootState
+  try {
+    const response = await fetch("http://127.0.0.1:3000/promoter/all-repayments", {
+      headers: { token: state.auth.token! },
+    })
+    const data = await response.json()
+    if (!response.ok) {
+      return rejectWithValue(data.message || "Failed to fetch repayments")
+    }
+    return data.repayments
+  } catch (error: any) {
+    return rejectWithValue(error.message)
   }
-
-  const data = await response.json()
-  return data.repayments
 })
 
 export const addRepayment = createAsyncThunk(
   "repayment/addRepayment",
-  async (
-    repaymentData: {
-      amount: number
-      cardNo: string
-      customerId: string
-      seasonId: string
-      paymentDate: string
-    },
-    { getState },
-  ) => {
-    const state = getState() as { auth: { token: string } }
-    const response = await fetch("http://127.0.0.1:3000/promoter/add-repayment", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        token: state.auth.token,
-      },
-      body: JSON.stringify(repaymentData),
-    })
-
-    if (!response.ok) {
-      throw new Error("Failed to add repayment")
+  async (repaymentData: { customerId: string; seasonId: string; amount: string }, { getState, rejectWithValue }) => {
+    const state = getState() as RootState
+    try {
+      const response = await fetch("http://127.0.0.1:3000/promoter/add-repayment", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", token: state.auth.token! },
+        body: JSON.stringify(repaymentData),
+      })
+      const data = await response.json()
+      if (!response.ok) {
+        return rejectWithValue(data.message || "Failed to add repayment")
+      }
+      return data
+    } catch (error: any) {
+      return rejectWithValue(error.message)
     }
-
-    const data = await response.json()
-    return data
   },
 )
 
 const repaymentSlice = createSlice({
   name: "repayment",
   initialState,
-  reducers: {
-    clearError: (state) => {
-      state.error = null
-    },
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(fetchRepayments.pending, (state) => {
         state.isLoading = true
         state.error = null
       })
-      .addCase(fetchRepayments.fulfilled, (state, action) => {
+      .addCase(fetchRepayments.fulfilled, (state, action: PayloadAction<RepaymentInfo[]>) => {
         state.isLoading = false
         state.repayments = action.payload
       })
       .addCase(fetchRepayments.rejected, (state, action) => {
         state.isLoading = false
-        state.error = action.error.message || "Failed to fetch repayments"
+        state.error = (action.payload as string) || "Failed to fetch repayments"
       })
       .addCase(addRepayment.pending, (state) => {
         state.isLoading = true
-        state.error = null
       })
       .addCase(addRepayment.fulfilled, (state) => {
         state.isLoading = false
-        // Refresh repayments list would be handled by refetching
+        // We will refetch the list after a successful addition
       })
       .addCase(addRepayment.rejected, (state, action) => {
         state.isLoading = false
-        state.error = action.error.message || "Failed to add repayment"
+        state.error = (action.payload as string) || "Failed to add repayment"
       })
   },
 })
 
-export const { clearError } = repaymentSlice.actions
 export default repaymentSlice.reducer

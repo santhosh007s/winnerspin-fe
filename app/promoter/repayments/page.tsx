@@ -4,6 +4,7 @@ import { RepaymentTable } from "@/components/repayment-table"
 import { RepaymentStats } from "@/components/repayment-stats"
 
 export default function RepaymentsPage() {
+  
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">

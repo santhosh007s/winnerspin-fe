@@ -7,20 +7,19 @@ import type { RootState } from "@/lib/store"
 export function RepaymentStats() {
   const { repayments } = useSelector((state: RootState) => state.repayment)
   const { currentSeason } = useSelector((state: RootState) => state.season)
+  
+  // Calculate stats from the new structure
+  const allInstallments = repayments.flatMap((customer) => customer.installments)
 
-  // Filter repayments by current season
-  const seasonRepayments = currentSeason
-    ? repayments.filter((repayment) => repayment.seasonId === currentSeason._id)
-    : repayments
-
-  // Calculate stats
-  const totalRepayments = seasonRepayments.length
-  const totalAmount = seasonRepayments.reduce((sum, repayment) => sum + repayment.amount, 0)
-  const thisMonthRepayments = seasonRepayments.filter((repayment) => {
-    const paymentDate = new Date(repayment.paymentDate)
+  const totalRepayments = allInstallments.length
+  const totalAmount = allInstallments.reduce((sum, inst) => sum + Number(inst.amount), 0)
+  const thisMonthRepayments = allInstallments.filter((inst) => {
+    const paymentDate = new Date(inst.paymentDate)
     const now = new Date()
     return paymentDate.getMonth() === now.getMonth() && paymentDate.getFullYear() === now.getFullYear()
   }).length
+
+  const totalDues = repayments.reduce((sum, customer) => sum + customer.dues.length, 0)
 
   const stats = [
     {
