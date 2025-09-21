@@ -33,7 +33,7 @@ const initialState: AuthState = {
 export const loginPromoter = createAsyncThunk(
   "auth/loginPromoter",
   async ({ username, password }: { username: string; password: string }) => {
-    const response = await fetch("http://127.0.0.1:3000/promoter/login", {
+    const response = await fetch("/api/promoter/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -50,12 +50,13 @@ export const loginPromoter = createAsyncThunk(
   },
 )
 
-export const fetchPromoterProfile = createAsyncThunk("auth/fetchProfile", async (_, { getState }) => {
+export const fetchPromoterProfile = createAsyncThunk("auth/fetchProfile", async (seasonId: string, { getState }) => {
   const state = getState() as { auth: { token: string } }
-  const response = await fetch("http://127.0.0.1:3000/promoter/profile", {
+  const response = await fetch(`/api/promoter/profile?seasonId=${seasonId}`, {
     method: "GET",
     headers: {
       token: state.auth.token,
+      seasonid: seasonId,
     },
   })
 
@@ -66,6 +67,35 @@ export const fetchPromoterProfile = createAsyncThunk("auth/fetchProfile", async 
   const data = await response.json()
   return data.promoter
 })
+
+export const updatePromoterProfile = createAsyncThunk(
+  "auth/updateProfile",
+  async (updateData: Partial<User>, { getState, rejectWithValue }) => {
+    const state = getState() as RootState
+    const seasonId = state.season.currentSeason?._id
+    if (!seasonId) {
+      return rejectWithValue("No active season selected")
+    }
+    try {
+      const response = await fetch("/api/promoter/profile", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          token: state.auth.token!,
+          seasonid: seasonId,
+        },
+        body: JSON.stringify(updateData),
+      })
+      const data = await response.json()
+      if (!response.ok) {
+        return rejectWithValue(data.message || "Failed to update profile")
+      }
+      return data.promoter
+    } catch (error: any) {
+      return rejectWithValue(error.message)
+    }
+  },
+)
 
 const authSlice = createSlice({
   name: "auth",
@@ -102,6 +132,17 @@ const authSlice = createSlice({
       })
       .addCase(fetchPromoterProfile.fulfilled, (state, action) => {
         state.user = action.payload
+      })
+      .addCase(updatePromoterProfile.pending, (state) => {
+        state.isLoading = true
+      })
+      .addCase(updatePromoterProfile.fulfilled, (state, action) => {
+        state.isLoading = false
+        state.user = action.payload
+      })
+      .addCase(updatePromoterProfile.rejected, (state, action) => {
+        state.isLoading = false
+        state.error = (action.payload as string) || "Failed to update profile"
       })
   },
 })

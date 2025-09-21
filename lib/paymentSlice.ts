@@ -29,7 +29,7 @@ export const fetchPaymentDetails = createAsyncThunk(
   async (_, { getState, rejectWithValue }) => {
     const state = getState() as RootState
     try {
-      const response = await fetch("http://127.0.0.1:3000/promoter/profile", {
+      const response = await fetch("/api/promoter/profile", {
         headers: { token: state.auth.token! },
       })
       const data = await response.json()
@@ -48,9 +48,13 @@ export const addPaymentDetails = createAsyncThunk(
   async (paymentDetails: Omit<PaymentDetails, "_id">, { getState, rejectWithValue }) => {
     const state = getState() as RootState
     try {
-      const response = await fetch("http://127.0.0.1:3000/promoter/add-payment-details", {
+      const response = await fetch("/api/promoter/add-payment-details", {
         method: "POST",
-        headers: { "Content-Type": "application/json", token: state.auth.token! },
+        headers: {
+          "Content-Type": "application/json",
+          token: state.auth.token!,
+          seasonid: state.season.currentSeason?._id,
+        },
         body: JSON.stringify(paymentDetails),
       })
       const data = await response.json()

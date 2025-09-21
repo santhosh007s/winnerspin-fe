@@ -6,18 +6,22 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { fetchWithdrawals } from "@/lib/withdrawalSlice"
+import { fetchSeasons } from "@/lib/seasonSlice"
 import type { AppDispatch, RootState } from "@/lib/store"
 
 export default function WithdrawalsPage() {
   const dispatch = useDispatch<AppDispatch>()
   const { user } = useSelector((state: RootState) => state.auth)
   const { withdrawals, isLoading } = useSelector((state: RootState) => state.withdrawal)
+  const { currentSeason } = useSelector((state: RootState) => state.season)
 
   useEffect(() => {
-    if (user?.status === "approved") {
-      dispatch(fetchWithdrawals())
+    if (!currentSeason) {
+      dispatch(fetchSeasons())
+    } else if (user?.status === "approved") {
+      dispatch(fetchWithdrawals(currentSeason._id))
     }
-  }, [dispatch, user])
+  }, [dispatch, user, currentSeason])
 
   if (user?.status !== "approved") {
     return (

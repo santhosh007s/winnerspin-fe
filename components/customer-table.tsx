@@ -16,9 +16,12 @@ export function CustomerTable() {
   const { customers, isLoading } = useSelector((state: RootState) => state.customer)
   const { currentSeason } = useSelector((state: RootState) => state.season)
   useEffect(() => {
-    dispatch(fetchCustomers())
-    if(!currentSeason) dispatch(fetchSeasons())
-  }, [dispatch])
+    if (currentSeason) {
+      dispatch(fetchCustomers(currentSeason._id))
+    } else {
+      dispatch(fetchSeasons())
+    }
+  }, [dispatch, currentSeason])
 
   if (isLoading) {
     return (

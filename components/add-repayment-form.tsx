@@ -37,7 +37,7 @@ export function AddRepaymentForm({ customerId, customerName, onSuccess }: AddRep
         addRepayment({
           customerId,
           seasonId: currentSeason._id,
-          amount: currentSeason.amount,
+          amount: Number(currentSeason.amount),
         }),
       ).unwrap()
 

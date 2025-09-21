@@ -207,14 +207,39 @@ export default function CustomerDetailPage() {
             </form>
           ) : (
             <div className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <p><Label>Username:</Label> {selectedCustomer.username}</p>
-                <p><Label>Email:</Label> {selectedCustomer.email}</p>
-                <p><Label>Mobile:</Label> {selectedCustomer.mobile}</p>
-                <p><Label>Address:</Label> {selectedCustomer.address}</p>
-                <p><Label>City:</Label> {selectedCustomer.city}</p>
-                <p><Label>State:</Label> {selectedCustomer.state}</p>
-                <p><Label>Pincode:</Label> {selectedCustomer.pincode}</p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-6">
+                <div className="space-y-1">
+                  <Label>Username</Label>
+                  <p className="text-lg">{selectedCustomer.username}</p>
+                </div>
+                <div className="space-y-1">
+                  <Label>Email</Label>
+                  <p className="text-lg">{selectedCustomer.email}</p>
+                </div>
+                <div className="space-y-1">
+                  <Label>Mobile</Label>
+                  <p className="text-lg">{selectedCustomer.mobile}</p>
+                </div>
+                <div className="space-y-1">
+                  <Label>Card Number</Label>
+                  <p className="text-lg font-mono">{selectedCustomer.cardNo}</p>
+                </div>
+                <div className="space-y-1 md:col-span-2">
+                  <Label>Address</Label>
+                  <p className="text-lg">{selectedCustomer.address}</p>
+                </div>
+                <div className="space-y-1">
+                  <Label>City</Label>
+                  <p className="text-lg">{selectedCustomer.city}</p>
+                </div>
+                <div className="space-y-1">
+                  <Label>State</Label>
+                  <p className="text-lg">{selectedCustomer.state}</p>
+                </div>
+                <div className="space-y-1">
+                  <Label>Pincode</Label>
+                  <p className="text-lg">{selectedCustomer.pincode}</p>
+                </div>
               </div>
               <div className="flex gap-2 pt-4">
                 <Button onClick={() => setIsEditing(true)}>

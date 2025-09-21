@@ -33,8 +33,10 @@ export function WithdrawalRequestForm({ hasPendingWithdrawal }: { hasPendingWith
   const { currentSeason } = useSelector((state: RootState) => state.season)
 
   useEffect(() => {
-    if(!currentSeason) dispatch(fetchSeasons())
-  }, [])
+    if (!currentSeason) {
+      dispatch(fetchSeasons())
+    }
+  }, [dispatch, currentSeason])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -49,14 +51,14 @@ export function WithdrawalRequestForm({ hasPendingWithdrawal }: { hasPendingWith
     }
 
     try {
-      await dispatch(requestWithdrawal(withdrawalAmount)).unwrap()
+      await dispatch(requestWithdrawal({ amount: withdrawalAmount, seasonId: currentSeason._id })).unwrap()
       setAmount("")
       setOpen(false)
       // Refresh earnings
 
       dispatch(fetchEarnings(currentSeason._id))
       dispatch(fetchWithdrawals())
-      dispatch(fetchPromoterProfile())
+      dispatch(fetchPromoterProfile(currentSeason._id))
     } catch (error) {
       // Error handled by Redux
     }

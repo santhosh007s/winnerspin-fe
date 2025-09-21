@@ -41,9 +41,11 @@ export function RepaymentForm() {
 
   useEffect(() => {
     if (open) {
-      !customers.length && dispatch(fetchCustomers())
+      if ((!customers.length || !currentSeason) && currentSeason?._id) {
+        dispatch(fetchCustomers(currentSeason._id))
+      }
     }
-  }, [open, dispatch])
+  }, [open, dispatch, customers.length, currentSeason])
 
   useEffect(() => {
     if (currentSeason) {
@@ -76,7 +78,7 @@ export function RepaymentForm() {
       setOpen(false)
 
       // Refresh repayments list
-      dispatch(fetchRepayments())
+      if (currentSeason) dispatch(fetchRepayments(currentSeason._id))
     } catch (error) {
       // Error handled by Redux
     }

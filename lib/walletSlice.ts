@@ -23,9 +23,10 @@ const initialState: WalletState = {
 
 export const fetchEarnings = createAsyncThunk("wallet/fetchEarnings", async (seasonId: string, { getState }) => {
   const state = getState() as { auth: { token: string } }
-  const response = await fetch(`http://127.0.0.1:3000/promoter/all-earnings?seasonId=${seasonId}`, {
+  const response = await fetch(`/api/promoter/all-earnings?seasonId=${seasonId}`, {
     headers: {
       token: state.auth.token,
+      seasonid: seasonId,
     },
   })
 

@@ -35,10 +35,10 @@ const initialState: RepaymentState = {
   error: null,
 }
 
-export const fetchRepayments = createAsyncThunk("repayment/fetchRepayments", async (_, { getState, rejectWithValue }) => {
+export const fetchRepayments = createAsyncThunk("repayment/fetchRepayments", async (seasonId: string, { getState, rejectWithValue }) => {
   const state = getState() as RootState
   try {
-    const response = await fetch("http://127.0.0.1:3000/promoter/all-repayments", {
+    const response = await fetch(`/api/promoter/all-repayments?seasonId=${seasonId}`, {
       headers: { token: state.auth.token! },
     })
     const data = await response.json()
@@ -53,12 +53,12 @@ export const fetchRepayments = createAsyncThunk("repayment/fetchRepayments", asy
 
 export const addRepayment = createAsyncThunk(
   "repayment/addRepayment",
-  async (repaymentData: { customerId: string; seasonId: string; amount: string }, { getState, rejectWithValue }) => {
+  async (repaymentData: { customerId: string; seasonId: string; amount: number }, { getState, rejectWithValue }) => {
     const state = getState() as RootState
     try {
-      const response = await fetch("http://127.0.0.1:3000/promoter/add-repayment", {
+      const response = await fetch("/api/promoter/add-repayment", {
         method: "POST",
-        headers: { "Content-Type": "application/json", token: state.auth.token! },
+        headers: { "Content-Type": "application/json", token: state.auth.token!, seasonid: repaymentData.seasonId },
         body: JSON.stringify(repaymentData),
       })
       const data = await response.json()

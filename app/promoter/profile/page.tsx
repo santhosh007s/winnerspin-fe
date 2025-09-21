@@ -1,15 +1,16 @@
 "use client"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useSelector, useDispatch } from "react-redux"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
-import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert"
 import { User, Mail, MapPin, CreditCard, Edit, Save, X } from "lucide-react"
-import { logout } from "@/lib/authSlice"
+import { fetchPromoterProfile, logout, updatePromoterProfile } from "@/lib/authSlice"
 import type { RootState, AppDispatch } from "@/lib/store"
+import { fetchSeasons } from "@/lib/seasonSlice"
 
 export default function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false)
@@ -21,9 +22,18 @@ export default function ProfilePage() {
     state: "",
     pincode: "",
   })
-
+  const { currentSeason } = useSelector((state: RootState) => state.season)
   const dispatch = useDispatch<AppDispatch>()
-  const { user } = useSelector((state: RootState) => state.auth)
+
+  useEffect(() => { // This effect seems redundant due to the layout's logic, but we'll keep it for now.
+    if (currentSeason) {
+      dispatch(fetchPromoterProfile(currentSeason._id))
+    } else {
+      dispatch(fetchSeasons())
+    }
+  }, [dispatch, currentSeason])
+  
+  const { user, isLoading: authLoading, error: authError } = useSelector((state: RootState) => state.auth)
 
   const handleEdit = () => {
     if (user) {
@@ -40,9 +50,12 @@ export default function ProfilePage() {
   }
 
   const handleSave = async () => {
-    // In a real app, this would make an API call to update the profile
-    console.log("Saving profile data:", editData)
-    setIsEditing(false)
+    try {
+      await dispatch(updatePromoterProfile(editData)).unwrap()
+      setIsEditing(false)
+    } catch (err) {
+      // Error is handled by the slice and displayed in the form
+    }
   }
 
   const handleCancel = () => {
@@ -112,15 +125,15 @@ export default function ProfilePage() {
         <CardContent>
           <div className="grid gap-4 md:grid-cols-3">
             <div>
-              <p className="text-sm font-medium text-muted-foreground">Username</p>
+              <Label>Username</Label>
               <p className="text-lg font-semibold">{user.username}</p>
             </div>
             <div>
-              <p className="text-sm font-medium text-muted-foreground">User ID</p>
+              <Label>User ID</Label>
               <p className="text-lg font-mono">{user.userid}</p>
             </div>
             <div>
-              <p className="text-sm font-medium text-muted-foreground">Status</p>
+              <Label>Status for {currentSeason?.season}</Label>
               <Badge variant={getStatusColor(user.status)} className="mt-1">
                 {user.status === "approved" ? "Approved" : "Pending Approval"}
               </Badge>
@@ -150,7 +163,7 @@ export default function ProfilePage() {
                   onChange={(e) => setEditData({ ...editData, email: e.target.value })}
                 />
               ) : (
-                <p className="text-lg">{user.email}</p>
+                <p className="text-lg pt-2">{user.email}</p>
               )}
             </div>
 
@@ -163,7 +176,7 @@ export default function ProfilePage() {
                   onChange={(e) => setEditData({ ...editData, mobNo: e.target.value })}
                 />
               ) : (
-                <p className="text-lg">{user.mobNo}</p>
+                <p className="text-lg pt-2">{user.mobNo}</p>
               )}
             </div>
           </div>
@@ -189,7 +202,7 @@ export default function ProfilePage() {
                 onChange={(e) => setEditData({ ...editData, address: e.target.value })}
               />
             ) : (
-              <p className="text-lg">{user.address}</p>
+              <p className="text-lg pt-2">{user.address || "-"}</p>
             )}
           </div>
 
@@ -203,7 +216,7 @@ export default function ProfilePage() {
                   onChange={(e) => setEditData({ ...editData, city: e.target.value })}
                 />
               ) : (
-                <p className="text-lg">{user.city}</p>
+                <p className="text-lg pt-2">{user.city || "-"}</p>
               )}
             </div>
 
@@ -216,7 +229,7 @@ export default function ProfilePage() {
                   onChange={(e) => setEditData({ ...editData, state: e.target.value })}
                 />
               ) : (
-                <p className="text-lg">{user.state}</p>
+                <p className="text-lg pt-2">{user.state || "-"}</p>
               )}
             </div>
 
@@ -229,7 +242,7 @@ export default function ProfilePage() {
                   onChange={(e) => setEditData({ ...editData, pincode: e.target.value })}
                 />
               ) : (
-                <p className="text-lg">{user.pincode}</p>
+                <p className="text-lg pt-2">{user.pincode || "-"}</p>
               )}
             </div>
           </div>
@@ -273,7 +286,13 @@ export default function ProfilePage() {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {user.status !== "approved" && (
+            {authError && (
+              <Alert variant="destructive">
+                <AlertTitle>Update Failed</AlertTitle>
+                <AlertDescription>{authError}</AlertDescription>
+              </Alert>
+            )}
+            {user.status !== "approved" && !isEditing && (
               <Alert>
                 <AlertDescription>
                   Your account is pending approval. Some features may be limited until your account is approved by an

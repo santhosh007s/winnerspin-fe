@@ -16,19 +16,19 @@ export function RepaymentTable() {
   const {customers} = useSelector((state: RootState) => state.customer)
   
   useEffect(() => {
-    !customers.length && dispatch(fetchCustomers())
+    if (currentSeason && !customers.length) dispatch(fetchCustomers(currentSeason._id))
   }, [])
   const { repayments, isLoading, error } = useSelector((state: RootState) => state.repayment)
   const { currentSeason } = useSelector((state: RootState) => state.season)
   
   useEffect(() => {
     if (currentSeason) {
-      dispatch(fetchRepayments())
+      dispatch(fetchRepayments(currentSeason._id))
     }
   }, [dispatch, currentSeason])
 
   const handleRepaymentSuccess = () => {
-    dispatch(fetchRepayments())
+    if (currentSeason) dispatch(fetchRepayments(currentSeason._id))
   }
 
   const isLoadingInitial = isLoading && repayments.length === 0

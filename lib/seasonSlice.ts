@@ -24,7 +24,7 @@ const initialState: SeasonState = {
 
 export const fetchSeasons = createAsyncThunk("season/fetchSeasons", async (_, { getState }) => {
   const state = getState() as { auth: { token: string } }
-  const response = await fetch("http://127.0.0.1:3000/promoter/all-seasons", {
+  const response = await fetch("/api/promoter/all-seasons", {
     headers: {
       token: state.auth.token,
     },

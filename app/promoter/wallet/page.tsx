@@ -26,7 +26,7 @@ export default function WalletPage() {
 
   useEffect(() => {
     if (!user) {
-      dispatch(fetchPromoterProfile())
+      dispatch(fetchPromoterProfile(currentSeason?._id))
     }
     if (!currentSeason) {
       dispatch(fetchSeasons())
@@ -37,7 +37,7 @@ export default function WalletPage() {
         dispatch(fetchEarnings(currentSeason._id))
       }
       dispatch(fetchPaymentDetails())
-      dispatch(fetchWithdrawals())
+      if (currentSeason?._id) dispatch(fetchWithdrawals(currentSeason._id))
     }
   }, [dispatch, user, currentSeason])
 
@@ -75,7 +75,7 @@ export default function WalletPage() {
       {/* Earnings Overview */}
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 text-card-foreground">
             <CardTitle className="text-sm font-medium text-card-foreground">Total Earnings</CardTitle>
             <Wallet className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
@@ -83,12 +83,12 @@ export default function WalletPage() {
             <div className="text-2xl font-bold text-primary">
               {isLoading ? "Loading..." : `₹${earnings.toLocaleString()}`}
             </div>
-            <p className="text-xs text-muted-foreground">Available for withdrawal</p>
+            <p className="text-xs text-muted-foreground">Earnings in this season</p>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 text-card-foreground">
             <CardTitle className="text-sm font-medium text-card-foreground">Payment Status</CardTitle>
             <CreditCard className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
@@ -101,7 +101,7 @@ export default function WalletPage() {
         </Card>
 
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 text-card-foreground">
             <CardTitle className="text-sm font-medium text-card-foreground">Account Status</CardTitle>
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>

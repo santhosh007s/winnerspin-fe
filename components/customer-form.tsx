@@ -72,7 +72,7 @@ export function CustomerForm() {
       setOpen(false)
 
       // Refresh customers list
-      dispatch(fetchCustomers())
+      if (currentSeason) dispatch(fetchCustomers(currentSeason._id))
     } catch (error) {
       // Error handled by Redux
     }

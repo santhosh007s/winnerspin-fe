@@ -20,11 +20,12 @@ const initialState: WithdrawalState = {
   error: null,
 }
 
-export const fetchWithdrawals = createAsyncThunk("withdrawal/fetchWithdrawals", async (_, { getState }) => {
+export const fetchWithdrawals = createAsyncThunk("withdrawal/fetchWithdrawals", async (seasonId: string, { getState }) => {
   const state = getState() as { auth: { token: string } }
-  const response = await fetch("http://127.0.0.1:3000/promoter/all-withdrawals", {
+  const response = await fetch(`/api/promoter/all-withdrawals?seasonId=${seasonId}`, {
     headers: {
       token: state.auth.token,
+      seasonid: seasonId,
     },
   })
 
@@ -38,13 +39,14 @@ export const fetchWithdrawals = createAsyncThunk("withdrawal/fetchWithdrawals", 
 
 export const requestWithdrawal = createAsyncThunk(
   "withdrawal/requestWithdrawal",
-  async (amount: number, { rejectWithValue, getState }) => {
+  async ({ amount, seasonId }: { amount: number; seasonId: string }, { rejectWithValue, getState }) => {
     const state = getState() as { auth: { token: string } }
-    const response = await fetch("http://127.0.0.1:3000/promoter/request-withdrawal", {
+    const response = await fetch("/api/promoter/request-withdrawal", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         token: state.auth.token,
+        seasonid: seasonId,
       },
       body: JSON.stringify({ amount }),
     })

@@ -31,9 +31,9 @@ const initialState: CustomerState = {
   error: null,
 }
 
-export const fetchCustomers = createAsyncThunk("customer/fetchCustomers", async (_, { getState }) => {
+export const fetchCustomers = createAsyncThunk("customer/fetchCustomers", async (seasonId: string, { getState }) => {
   const state = getState() as { auth: { token: string } }
-  const response = await fetch("http://127.0.0.1:3000/promoter/all-customers", {
+  const response = await fetch(`/api/promoter/all-customers?seasonId=${seasonId}`, {
     headers: {
       token: state.auth.token,
     },
@@ -51,7 +51,7 @@ export const fetchCustomerDetails = createAsyncThunk(
   "customer/fetchCustomerDetails",
   async (customerId: string, { getState }) => {
     const state = getState() as { auth: { token: string } }
-    const response = await fetch(`http://127.0.0.1:3000/promoter/customer-details?id=${customerId}`, {
+    const response = await fetch(`/api/promoter/customer-details?id=${customerId}`, {
       headers: {
         token: state.auth.token,
       },
@@ -68,14 +68,15 @@ export const fetchCustomerDetails = createAsyncThunk(
 
 export const createCustomer = createAsyncThunk(
   "customer/createCustomer",
-  async (customerData: Omit<Customer, "id" | "cardNo" | "_id">, { getState }) => {
+  async (customerData: Omit<Customer, "id" | "cardNo" | "_id">, { getState, rejectWithValue }) => {
     console.log("customerData", customerData);
-    const state = getState() as { auth: { token: string } }
-    const response = await fetch("http://127.0.0.1:3000/promoter/create-customer", {
+    const state = getState() as RootState
+    const response = await fetch("/api/promoter/create-customer", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         token: state.auth.token,
+        seasonid: customerData.seasonId,
       },
       body: JSON.stringify(customerData),
     })
@@ -97,9 +98,13 @@ export const updateCustomerDetails = createAsyncThunk(
   ) => {
     const state = getState() as RootState
     try {
-      const response = await fetch(`http://127.0.0.1:3000/promoter/customer/${customerId}`, {
+      const response = await fetch(`/api/promoter/customer/${customerId}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json", token: state.auth.token! },
+        headers: {
+          "Content-Type": "application/json",
+          token: state.auth.token!,
+          seasonid: state.season.currentSeason?._id,
+        },
         body: JSON.stringify(updateData),
       })
       const data = await response.json()
