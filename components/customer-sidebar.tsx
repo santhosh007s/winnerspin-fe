@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { LogoutButton } from "./logout-button"
-import { LayoutDashboard, User, CreditCard, Users, Menu, X, ChevronRight } from "lucide-react"
+import { LayoutDashboard, User, CreditCard, Menu, X, ChevronRight, Loader2 } from "lucide-react"
 import { useAppSelector } from "@/lib/hooks"
 
 const navigation = [
@@ -26,11 +26,6 @@ const navigation = [
     href: "/customer/installments",
     icon: CreditCard,
   },
-  {
-    name: "Promoter",
-    href: "/customer/promoter",
-    icon: Users,
-  },
 ]
 
 export function CustomerSidebar() {
@@ -39,6 +34,7 @@ export function CustomerSidebar() {
   const { user } = useAppSelector((state) => state.customerAuth)
 
   const getUserInitials = (name: string) => {
+    if (!name) return "" // Add a guard clause
     return name
       .split(" ")
       .map((n) => n[0])
@@ -89,9 +85,9 @@ export function CustomerSidebar() {
             </div>
           </div>
 
-          {/* User info */}
-          {user && (
-            <div className="p-6 border-b border-gray-200">
+          {/* User info - with loading state */}
+          <div className="p-6 border-b border-gray-200">
+            {user ? (
               <div className="flex items-center space-x-3">
                 <Avatar className="w-10 h-10">
                   <AvatarFallback className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium">
@@ -100,11 +96,15 @@ export function CustomerSidebar() {
                 </Avatar>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-gray-900 truncate">{user.name}</p>
-                  <p className="text-xs text-gray-500 truncate">Card: {user.cardNumber}</p>
+                  <p className="text-xs text-gray-500 truncate">Card: {user.cardNo || user.cardNumber}</p>
                 </div>
               </div>
-            </div>
-          )}
+            ) : (
+              <div className="flex items-center justify-center h-[52px]">
+                <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
+              </div>
+            )}
+          </div>
 
           {/* Navigation */}
           <nav className="flex-1 px-4 py-6 space-y-2">

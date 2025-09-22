@@ -9,6 +9,7 @@ import { MobileNav } from "@/components/mobile-nav"
 import type { RootState, AppDispatch } from "@/lib/store"
 import { fetchPromoterProfile } from "@/lib/authSlice"
 import { fetchSeasons } from "@/lib/seasonSlice"
+import { ThemeProvider } from "@/components/theme-provider"
 
 export default function PromoterLayout({
   children,
@@ -54,12 +55,14 @@ export default function PromoterLayout({
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <Sidebar />
-      <div className="lg:pl-64 pb-16 lg:pb-0">
-        <main className="p-6">{children}</main>
+    <ThemeProvider>
+      <div className="min-h-screen bg-background">
+        <Sidebar />
+        <div className="lg:pl-64 pb-16 lg:pb-0">
+          <main className="p-6">{children}</main>
+        </div>
+        <MobileNav />
       </div>
-      <MobileNav />
-    </div>
+    </ThemeProvider>
   )
 }

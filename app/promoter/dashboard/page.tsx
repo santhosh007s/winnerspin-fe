@@ -1,6 +1,7 @@
 "use client"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { SeasonSwitcher } from "@/components/season-switcher"
+import { ThemeToggle } from "@/components/theme-toggle"
 import { StatsCards } from "@/components/stats-cards"
 import { useSelector } from "react-redux"
 import type { RootState } from "@/lib/store"
@@ -17,7 +18,10 @@ export default function PromoterDashboard() {
           <h1 className="text-3xl font-bold text-primary">Dashboard</h1>
           <p className="text-muted-foreground">Welcome back, {user?.username}</p>
         </div>
-        <SeasonSwitcher />
+        <div className="flex items-center gap-2">
+          <SeasonSwitcher />
+          <ThemeToggle />
+        </div>
       </div>
 
       {/* Current Season Info */}

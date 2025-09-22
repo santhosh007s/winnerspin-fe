@@ -20,7 +20,9 @@ const initialState: WithdrawalState = {
   error: null,
 }
 
-export const fetchWithdrawals = createAsyncThunk("withdrawal/fetchWithdrawals", async (seasonId: string, { getState }) => {
+export const fetchWithdrawals = createAsyncThunk(
+  "withdrawal/fetchWithdrawals",
+  async ({ seasonId }: { seasonId: string }, { getState }) => {
   const state = getState() as { auth: { token: string } }
   const response = await fetch(`/api/promoter/all-withdrawals?seasonId=${seasonId}`, {
     headers: {
@@ -35,7 +37,8 @@ export const fetchWithdrawals = createAsyncThunk("withdrawal/fetchWithdrawals", 
 
   const data = await response.json()
   return data.withdrawals
-})
+  },
+)
 
 export const requestWithdrawal = createAsyncThunk(
   "withdrawal/requestWithdrawal",

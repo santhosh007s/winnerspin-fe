@@ -4,12 +4,14 @@ import { useAppSelector } from "@/lib/hooks"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Bell, Search } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { ThemeToggle } from "@/components/theme-toggle"
 import { Input } from "@/components/ui/input"
 
 export function CustomerNavbar() {
   const { user } = useAppSelector((state) => state.customerAuth)
 
   const getUserInitials = (name: string) => {
+    if (!name) return "" // Guard against undefined name
     return name
       .split(" ")
       .map((n) => n[0])
@@ -28,19 +30,19 @@ export function CustomerNavbar() {
   }
 
   return (
-    <header className="bg-white shadow-sm border-b border-gray-200">
+    <header className="bg-white dark:bg-gray-900 shadow-sm border-b border-gray-200 dark:border-gray-800">
       <div className="px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Left side - Welcome message */}
           <div className="flex-1">
             <div className="hidden sm:block">
-              <h2 className="text-lg font-semibold text-gray-900">
-                Welcome back, {user?.name?.split(" ")[0] || "Customer"}!
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                Welcome back, {user ? user.name?.split(" ")[0] : "Customer"}!
               </h2>
-              <p className="text-sm text-gray-500">{getCurrentTime()}</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">{getCurrentTime()}</p>
             </div>
             <div className="sm:hidden">
-              <h2 className="text-lg font-semibold text-gray-900">Dashboard</h2>
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Dashboard</h2>
             </div>
           </div>
 
@@ -56,9 +58,12 @@ export function CustomerNavbar() {
               />
             </div>
 
+            {/* Theme Toggle */}
+            <ThemeToggle />
+
             {/* Notifications */}
             <Button variant="ghost" size="sm" className="relative">
-              <Bell className="w-5 h-5 text-gray-600" />
+              <Bell className="w-5 h-5 text-gray-600 dark:text-gray-300" />
               <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></span>
             </Button>
 
@@ -71,8 +76,8 @@ export function CustomerNavbar() {
                   </AvatarFallback>
                 </Avatar>
                 <div className="text-sm">
-                  <p className="font-medium text-gray-900">{user.name}</p>
-                  <p className="text-gray-500">Customer</p>
+                  <p className="font-medium text-gray-900 dark:text-gray-100">{user.name}</p>
+                  <p className="text-gray-500 dark:text-gray-400">Customer</p>
                 </div>
               </div>
             )}

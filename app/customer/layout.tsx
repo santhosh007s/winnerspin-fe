@@ -2,6 +2,7 @@
 
 import type React from "react"
 import { usePathname } from "next/navigation"
+import { ThemeProvider } from "@/components/theme-provider"
 
 import { ReduxProvider } from "@/lib/redux-provider"
 import { AuthGuard } from "@/components/auth-guard"
@@ -13,20 +14,22 @@ export default function CustomerLayout({ children }: { children: React.ReactNode
   const isLoginPage = pathname === "/customer/login"
 
   return (
-    <ReduxProvider>
-      {isLoginPage ? (
-        <AuthGuard>{children}</AuthGuard>
-      ) : (
-        <div className="min-h-screen bg-gray-50">
-          <CustomerSidebar />
-          <div className="lg:pl-64">
-            <CustomerNavbar />
-            <main className="py-6 px-4 sm:px-6 lg:px-8 lg:pb-0">
-              <AuthGuard>{children}</AuthGuard>
-            </main>
+    <ThemeProvider>
+      <ReduxProvider>
+        {isLoginPage ? (
+          <AuthGuard>{children}</AuthGuard>
+        ) : (
+          <div className="customer-theme min-h-screen bg-gray-50 dark:bg-gray-900">
+            <CustomerSidebar />
+            <div className="lg:pl-64">
+              <CustomerNavbar />
+              <main className="py-6 px-4 sm:px-6 lg:px-8 lg:pb-0">
+                <AuthGuard>{children}</AuthGuard>
+              </main>
+            </div>
           </div>
-        </div>
-      )}
-    </ReduxProvider>
+        )}
+      </ReduxProvider>
+    </ThemeProvider>
   )
 }

@@ -55,9 +55,8 @@ export function WithdrawalRequestForm({ hasPendingWithdrawal }: { hasPendingWith
       setAmount("")
       setOpen(false)
       // Refresh earnings
-
-      dispatch(fetchEarnings(currentSeason._id))
-      dispatch(fetchWithdrawals())
+      dispatch(fetchEarnings({ seasonId: currentSeason._id }))
+      dispatch(fetchWithdrawals({ seasonId: currentSeason._id }))
       dispatch(fetchPromoterProfile(currentSeason._id))
     } catch (error) {
       // Error handled by Redux

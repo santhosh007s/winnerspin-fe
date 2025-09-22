@@ -1,21 +1,13 @@
 "use client"
 
-import { useEffect } from "react"
-import { useAppDispatch, useAppSelector } from "@/lib/hooks"
-import { fetchCustomerProfile } from "@/lib/customerProfileSlice"
-import { ProfileCard } from "@/components/profile-card"
+import { useAppSelector } from "@/lib/hooks"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { Loader2, User, Calendar, Shield } from "lucide-react"
+import { Loader2, User, Mail, Phone, MapPin, UserSquare, Calendar, Shield } from "lucide-react"
 
-export default function CustomerProfile() {
-  const dispatch = useAppDispatch()
-  const { profile, isLoading, error } = useAppSelector((state) => state.customerProfile)
-
-  useEffect(() => {
-    dispatch(fetchCustomerProfile())
-  }, [dispatch])
+export default function CustomerProfilePage() {
+  const { user, promoter, isLoading, error } = useAppSelector((state) => state.customerAuth)
 
   if (isLoading) {
     return (
@@ -36,7 +28,7 @@ export default function CustomerProfile() {
     )
   }
 
-  if (!profile) {
+  if (!user) {
     return (
       <div className="text-center py-12">
         <p className="text-gray-600">No profile data available</p>
@@ -45,6 +37,7 @@ export default function CustomerProfile() {
   }
 
   const getUserInitials = (name: string) => {
+    if (!name) return "" // Prevent error if name is undefined
     return name
       .split(" ")
       .map((n) => n[0])
@@ -59,21 +52,21 @@ export default function CustomerProfile() {
       <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-teal-600 rounded-xl p-6 text-white">
         <div className="flex items-center space-x-4">
           <Avatar className="w-16 h-16 border-4 border-white/20">
-            <AvatarFallback className="bg-white/20 text-white text-xl font-bold">
-              {getUserInitials(profile.username)}
+            <AvatarFallback className="bg-white/20 text-white text-xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600">
+              {getUserInitials(user.name)}
             </AvatarFallback>
           </Avatar>
           <div>
-            <h1 className="text-2xl font-bold">{profile.username}</h1>
+            <h1 className="text-2xl font-bold">{user.name}</h1>
             <p className="text-blue-100">Customer Profile</p>
             <div className="flex items-center mt-2">
               <Badge
                 variant="secondary"
                 className={`${
-                  profile.status === "active" ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"
+                  user.status === "approved" ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"
                 }`}
               >
-                {profile.status === "active" ? "Active Account" : "Inactive Account"}
+                {user.status === "approved" ? "Active Account" : "Pending Approval"}
               </Badge>
             </div>
           </div>
@@ -84,7 +77,37 @@ export default function CustomerProfile() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Main Profile Card */}
         <div className="lg:col-span-2">
-          <ProfileCard profile={profile} />
+          <Card>
+            <CardHeader>
+              <CardTitle>Account Details</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="flex items-center">
+                  <User className="w-5 h-5 mr-3 text-muted-foreground" />
+                  <span className="text-sm font-medium w-32">Full Name</span>
+                  <span className="text-sm text-muted-foreground">{user.name}</span>
+                </div>
+                <div className="flex items-center">
+                  <Mail className="w-5 h-5 mr-3 text-muted-foreground" />
+                  <span className="text-sm font-medium w-32">Email</span>
+                  <span className="text-sm text-muted-foreground">{user.email}</span>
+                </div>
+                <div className="flex items-center">
+                  <Phone className="w-5 h-5 mr-3 text-muted-foreground" />
+                  <span className="text-sm font-medium w-32">Mobile</span>
+                  <span className="text-sm text-muted-foreground">{user.mobile}</span>
+                </div>
+                <div className="flex items-center">
+                  <MapPin className="w-5 h-5 mr-3 text-muted-foreground" />
+                  <span className="text-sm font-medium w-32">Address</span>
+                  <span className="text-sm text-muted-foreground">
+                    {user.address || 'N/A'}, {user.city || 'N/A'}, {user.state || 'N/A'} - {user.pincode || 'N/A'}
+                  </span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Account Information */}
@@ -100,16 +123,16 @@ export default function CustomerProfile() {
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
                 <span className="text-sm text-gray-600">Account ID</span>
-                <span className="text-sm font-medium">{profile._id}</span>
+                <span className="text-sm font-medium truncate">{user._id}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm text-gray-600">Card Number</span>
-                <span className="text-sm font-medium font-mono">{profile.cardNumber}</span>
+                <span className="text-sm font-medium font-mono">{user.cardNo}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm text-gray-600">Member Since</span>
                 <span className="text-sm font-medium">
-                  {new Date(profile.createdAt).toLocaleDateString("en-US", {
+                  {new Date(user.createdAt).toLocaleDateString("en-US", {
                     year: "numeric",
                     month: "long",
                     day: "numeric",
@@ -120,46 +143,46 @@ export default function CustomerProfile() {
                 <span className="text-sm text-gray-600">Status</span>
                 <Badge
                   variant="secondary"
-                  className={`${
-                    profile.status === "active" ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"
-                  }`}
+                  className={`${user.status === "approved" ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"}`}
                 >
-                  {profile.status === "active" ? "Active" : "Inactive"}
+                  {user.status === "approved" ? "Active" : "Inactive"}
                 </Badge>
               </div>
             </CardContent>
           </Card>
 
-          {/* Quick Stats */}
-          <Card className="shadow-sm">
-            <CardHeader>
-              <CardTitle>Account Summary</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="bg-blue-50 rounded-lg p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-blue-600 font-medium">Account Age</p>
-                    <p className="text-lg font-bold text-blue-900">
-                      {Math.floor((Date.now() - new Date(profile.createdAt).getTime()) / (1000 * 60 * 60 * 24 * 365))}{" "}
-                      years
-                    </p>
+          {/* Promoter Details */}
+          {promoter && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Your Promoter</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="flex items-center">
+                    <UserSquare className="w-5 h-5 mr-3 text-muted-foreground" />
+                    <span className="text-sm font-medium w-32">Promoter ID</span>
+                    <span className="text-sm text-muted-foreground">{promoter.userid}</span>
                   </div>
-                  <Calendar className="w-8 h-8 text-blue-600" />
-                </div>
-              </div>
-
-              <div className="bg-green-50 rounded-lg p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-green-600 font-medium">Profile Status</p>
-                    <p className="text-lg font-bold text-green-900">Complete</p>
+                  <div className="flex items-center">
+                    <User className="w-5 h-5 mr-3 text-muted-foreground" />
+                    <span className="text-sm font-medium w-32">Name</span>
+                    <span className="text-sm text-muted-foreground">{promoter.username}</span>
                   </div>
-                  <User className="w-8 h-8 text-green-600" />
+                  <div className="flex items-center">
+                    <Mail className="w-5 h-5 mr-3 text-muted-foreground" />
+                    <span className="text-sm font-medium w-32">Email</span>
+                    <span className="text-sm text-muted-foreground">{promoter.email}</span>
+                  </div>
+                  <div className="flex items-center">
+                    <Phone className="w-5 h-5 mr-3 text-muted-foreground" />
+                    <span className="text-sm font-medium w-32">Phone</span>
+                    <span className="text-sm text-muted-foreground">{promoter.mobNo}</span>
+                  </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          )}
 
           {/* Security Notice */}
           <Card className="shadow-sm border-amber-200 bg-amber-50">
