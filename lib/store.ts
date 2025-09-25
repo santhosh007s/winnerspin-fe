@@ -7,6 +7,7 @@ import customerSlice from "./customerSlice";
 import repaymentSlice from "./repaymentSlice";
 import walletSlice from "./walletSlice";
 import withdrawalSlice from "./withdrawalSlice";
+import posterSlice from "./posterSlice";
 import paymentReducer from "./paymentSlice";
 
 // Customer-related slices
@@ -25,6 +26,7 @@ export const store = configureStore({
     wallet: walletSlice,
     withdrawal: withdrawalSlice,
     payment: paymentReducer,
+    poster: posterSlice,
 
     // Customer reducers
     customerAuth: customerAuthSlice,

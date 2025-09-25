@@ -19,20 +19,20 @@ export function QuickActionsCard() {
       href: "/customer/profile",
       color: "bg-green-50 text-green-600 hover:bg-green-100",
     },
-    {
-      title: "Contact Promoter",
-      description: "Get in touch with your promoter",
-      icon: Users,
-      href: "/customer/promoter",
-      color: "bg-purple-50 text-purple-600 hover:bg-purple-100",
-    },
-    {
-      title: "Download Statement",
-      description: "Get your payment statement",
-      icon: FileText,
-      href: "#",
-      color: "bg-orange-50 text-orange-600 hover:bg-orange-100",
-    },
+    // {
+    //   title: "Contact Promoter",
+    //   description: "Get in touch with your promoter",
+    //   icon: Users,
+    //   href: "/customer/promoter",
+    //   color: "bg-purple-50 text-purple-600 hover:bg-purple-100",
+    // },
+    // {
+    //   title: "Download Statement",
+    //   description: "Get your payment statement",
+    //   icon: FileText,
+    //   href: "#",
+    //   color: "bg-orange-50 text-orange-600 hover:bg-orange-100",
+    // },
   ]
 
   return (
@@ -41,12 +41,13 @@ export function QuickActionsCard() {
         <CardTitle>Quick Actions</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className=" grid grid-cols-1 sm:grid-cols-2 gap-4">
           {actions.map((action) => (
             <Link key={action.title} href={action.href}>
               <Button
                 variant="ghost"
                 className="h-auto p-4 flex flex-col items-start space-y-2 hover:bg-gray-50 w-full"
+                // backdrop-blur-md bg-white/10 border border-white/10 rounded-3xl p-8 hover:bg-white hover:border-white transition-all duration-300 group
               >
                 <div className={`p-2 rounded-lg ${action.color}`}>
                   <action.icon className="w-5 h-5" />

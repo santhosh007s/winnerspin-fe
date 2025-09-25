@@ -2,10 +2,9 @@
 
 import { useAppSelector } from "@/lib/hooks"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { Bell, Search } from "lucide-react"
+import { Bell } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ThemeToggle } from "@/components/theme-toggle"
-import { Input } from "@/components/ui/input"
 
 export function CustomerNavbar() {
   const { user } = useAppSelector((state) => state.customerAuth)
@@ -47,17 +46,7 @@ export function CustomerNavbar() {
           </div>
 
           {/* Right side - Search and user info */}
-          <div className="flex items-center space-x-4">
-            {/* Search - hidden on mobile */}
-            <div className="hidden md:block relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-              <Input
-                type="text"
-                placeholder="Search..."
-                className="pl-10 w-64 bg-gray-50 border-gray-200 focus:bg-white"
-              />
-            </div>
-
+          <div className="flex items-center space-x-8">
             {/* Theme Toggle */}
             <ThemeToggle />
 

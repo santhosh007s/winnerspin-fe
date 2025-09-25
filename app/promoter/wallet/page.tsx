@@ -34,10 +34,10 @@ export default function WalletPage() {
 
     if (user?.status === "approved") {
       if (currentSeason?._id) {
-        dispatch(fetchEarnings(currentSeason._id))
+        dispatch(fetchEarnings())
       }
       dispatch(fetchPaymentDetails())
-      if (currentSeason?._id) dispatch(fetchWithdrawals(currentSeason._id))
+      dispatch(fetchWithdrawals())
     }
   }, [dispatch, user, currentSeason])
 

@@ -1,5 +1,5 @@
 "use client"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import type React from "react"
 
 import { useDispatch, useSelector } from "react-redux"
@@ -19,6 +19,19 @@ import { Plus } from "lucide-react"
 import { createCustomer, fetchCustomers } from "@/lib/customerSlice"
 import type { AppDispatch, RootState } from "@/lib/store"
 
+const getInitialFormData = (seasonAmount?: number) => ({
+  username: "",
+  password: "",
+  email: "",
+  cardNo: "",
+  mobile: "",
+  state: "",
+  city: "",
+  address: "",
+  pincode: "",
+  firstPayment: seasonAmount?.toString() || "",
+  paymentDate: new Date().toISOString().split("T")[0],
+})
 export function CustomerForm() {
   const [open, setOpen] = useState(false)
   const [formData, setFormData] = useState({
@@ -39,6 +52,15 @@ export function CustomerForm() {
   const { currentSeason } = useSelector((state: RootState) => state.season)
   const { isLoading, error } = useSelector((state: RootState) => state.customer)
 
+  useEffect(() => {
+    if (open && currentSeason) {
+      setFormData((prev) => ({
+        ...prev, // Keep any user-entered data if dialog is re-opened
+        ...getInitialFormData(currentSeason.amount),
+      }))
+    }
+  }, [open, currentSeason])
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     console.log("Creating Customer ...", formData);
@@ -56,19 +78,7 @@ export function CustomerForm() {
       ).unwrap()
 
       // Reset form and close dialog
-      setFormData({
-        username: "",
-        password: "",
-        email: "",
-        cardNo: "",
-        mobile: "",
-        state: "",
-        city: "",
-        address: "",
-        pincode: "",
-        firstPayment: "",
-        paymentDate: "",
-      })
+      setFormData(getInitialFormData(currentSeason?.amount))
       setOpen(false)
 
       // Refresh customers list

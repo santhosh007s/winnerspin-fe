@@ -4,31 +4,24 @@ import { useEffect } from "react"
 import { useAppDispatch, useAppSelector } from "@/lib/hooks"
 import { fetchCustomerProfile } from "@/lib/customerProfileSlice"
 import { fetchInstallmentSummary } from "@/lib/installmentsSlice"
-import { fetchPromoterDetails } from "@/lib/promoterSlice"
 import { StatCard } from "@/components/stat-card"
 import { QuickActionsCard } from "@/components/quick-actions-card"
-import { RecentActivityCard } from "@/components/recent-activity-card"
-import { PromoterQuickView } from "@/components/promoter-quick-view"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
-import { Loader2, DollarSign, Calendar, CheckCircle, AlertCircle, TrendingUp, Eye } from "lucide-react"
-import Link from "next/link"
+import { Loader2, DollarSign, Calendar, CheckCircle, AlertCircle, TrendingUp } from "lucide-react"
 
 export default function CustomerDashboard() {
   const dispatch = useAppDispatch()
   const { profile, isLoading: profileLoading } = useAppSelector((state) => state.customerProfile)
   const { summary, isLoading: summaryLoading } = useAppSelector((state) => state.installments)
-  const { promoter, isLoading: promoterLoading } = useAppSelector((state) => state.promoter)
 
   useEffect(() => {
     // Fetch all dashboard data
     dispatch(fetchCustomerProfile())
     dispatch(fetchInstallmentSummary())
-    dispatch(fetchPromoterDetails())
   }, [dispatch])
 
-  const isLoading = profileLoading || summaryLoading || promoterLoading
+  const isLoading = profileLoading || summaryLoading
 
   if (isLoading) {
     return (
@@ -104,10 +97,8 @@ export default function CustomerDashboard() {
       </div>
 
       {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left Column - 2/3 width */}
-        <div className="lg:col-span-2 space-y-6">
-          {/* Payment Progress Card */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Payment Progress Card */}
           <Card className="shadow-sm">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -142,89 +133,6 @@ export default function CustomerDashboard() {
 
           {/* Quick Actions */}
           <QuickActionsCard />
-
-          {/* Recent Activity */}
-          <RecentActivityCard />
-        </div>
-
-        {/* Right Column - 1/3 width */}
-        <div className="space-y-6">
-          {/* Profile Summary */}
-          <Card className="shadow-sm">
-            <CardHeader>
-              <CardTitle className="flex items-center justify-between">
-                <span>Profile Summary</span>
-                <Link href="/customer/profile">
-                  <Button variant="ghost" size="sm">
-                    <Eye className="w-4 h-4 mr-1" />
-                    View
-                  </Button>
-                </Link>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">Card Number</span>
-                <span className="text-sm font-medium">{profile?.cardNumber}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">Email</span>
-                <span className="text-sm font-medium truncate">{profile?.email}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">Member Since</span>
-                <span className="text-sm font-medium">
-                  {profile?.dateJoined ? new Date(profile.dateJoined).getFullYear() : "N/A"}
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">Status</span>
-                <span
-                  className={`text-sm font-medium px-2 py-1 rounded-full ${
-                    profile?.status === "active" ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"
-                  }`}
-                >
-                  {profile?.status === "active" ? "Active" : "Inactive"}
-                </span>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Promoter Quick View */}
-          <PromoterQuickView promoter={promoter} />
-
-          {/* Account Alerts */}
-          <Card className="shadow-sm">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <AlertCircle className="w-5 h-5 text-amber-600" />
-                Account Alerts
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                {summary?.overdueCount && summary.overdueCount > 0 ? (
-                  <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-                    <p className="text-sm font-medium text-red-800">
-                      {summary.overdueCount} overdue payment{summary.overdueCount > 1 ? "s" : ""}
-                    </p>
-                    <p className="text-xs text-red-600 mt-1">Please contact your promoter to resolve</p>
-                  </div>
-                ) : (
-                  <div className="bg-green-50 border border-green-200 rounded-lg p-3">
-                    <p className="text-sm font-medium text-green-800">All payments up to date</p>
-                    <p className="text-xs text-green-600 mt-1">Great job staying current!</p>
-                  </div>
-                )}
-
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                  <p className="text-sm font-medium text-blue-800">Next payment reminder</p>
-                  <p className="text-xs text-blue-600 mt-1">We'll notify you 3 days before due date</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
       </div>
     </div>
   )

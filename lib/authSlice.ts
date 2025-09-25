@@ -32,7 +32,7 @@ const initialState: AuthState = {
 
 export const loginPromoter = createAsyncThunk(
   "auth/loginPromoter",
-  async ({ username, password }: { username: string; password: string }) => {
+  async ({ username, password }: { username: string; password: string }, { rejectWithValue }) => {
     const response = await fetch("/api/promoter/login", {
       method: "POST",
       headers: {
@@ -40,12 +40,12 @@ export const loginPromoter = createAsyncThunk(
       },
       body: JSON.stringify({ username, password }),
     })
+    const data = await response.json()
 
     if (!response.ok) {
-      throw new Error("Login failed")
+      return rejectWithValue(data.message || "Login failed")
     }
 
-    const data = await response.json()
     return data
   },
 )
@@ -128,7 +128,7 @@ const authSlice = createSlice({
       })
       .addCase(loginPromoter.rejected, (state, action) => {
         state.isLoading = false
-        state.error = action.error.message || "Login failed"
+        state.error = (action.payload as string) || "Login failed"
       })
       .addCase(fetchPromoterProfile.fulfilled, (state, action) => {
         state.user = action.payload

@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { SeasonSwitcher } from "@/components/season-switcher"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { StatsCards } from "@/components/stats-cards"
+import { NewPosterPopup } from "@/components/new-poster-popup"
 import { useSelector } from "react-redux"
 import type { RootState } from "@/lib/store"
 
@@ -12,6 +13,8 @@ export default function PromoterDashboard() {
 
   return (
     <div className="space-y-6">
+      <NewPosterPopup />
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>

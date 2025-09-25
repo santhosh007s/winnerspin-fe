@@ -1,13 +1,23 @@
 "use client"
 
-import { useAppSelector } from "@/lib/hooks"
+import { useEffect } from "react"
+import { useAppDispatch, useAppSelector } from "@/lib/hooks"
+import { fetchCustomerProfile } from "@/lib/customerProfileSlice"
+import type { AppDispatch, RootState } from "@/lib/store"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { Loader2, User, Mail, Phone, MapPin, UserSquare, Calendar, Shield } from "lucide-react"
+import { Progress } from "@/components/ui/progress"
+import { Loader2, User, Mail, Phone, MapPin, UserSquare, Calendar, Shield, Clock, TrendingUp } from "lucide-react"
 
 export default function CustomerProfilePage() {
-  const { user, promoter, isLoading, error } = useAppSelector((state) => state.customerAuth)
+  const dispatch = useAppDispatch<AppDispatch>()
+  const { profile: user, isLoading, error } = useAppSelector((state: RootState) => state.customerProfile)
+  const promoter = user?.promoter
+
+  useEffect(() => {
+    dispatch(fetchCustomerProfile())
+  }, [dispatch])
 
   if (isLoading) {
     return (
@@ -46,6 +56,47 @@ export default function CustomerProfilePage() {
       .slice(0, 2)
   }
 
+  const getSeasonStatus = (startDate: string, endDate: string) => {
+    const now = new Date()
+    const start = new Date(startDate)
+    const end = new Date(endDate)
+
+    if (now < start) return "upcoming"
+    if (now > end) return "completed"
+    return "active"
+  }
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "active":
+        return "bg-green-100 text-green-800"
+      case "upcoming":
+        return "bg-blue-100 text-blue-800"
+      default: // completed
+        return "bg-gray-100 text-gray-800"
+    }
+  }
+
+  const calculateSeasonProgress = (startDate: string, endDate: string) => {
+    const start = new Date(startDate)
+    const end = new Date(endDate)
+    const now = new Date()
+
+    if (now < start) return { currentMonth: 0, totalMonths: 0, progress: 0 }
+
+    const totalMonths = (end.getFullYear() - start.getFullYear()) * 12 + (end.getMonth() - start.getMonth()) + 1
+
+    let currentMonth = (now.getFullYear() - start.getFullYear()) * 12 + (now.getMonth() - start.getMonth()) + 1
+
+    if (now > end) {
+      currentMonth = totalMonths
+    }
+
+    const progress = totalMonths > 0 ? (currentMonth / totalMonths) * 100 : 0
+
+    return { currentMonth, totalMonths, progress: Math.min(100, progress) }
+  }
+  console.log(user.status)
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -62,11 +113,9 @@ export default function CustomerProfilePage() {
             <div className="flex items-center mt-2">
               <Badge
                 variant="secondary"
-                className={`${
-                  user.status === "approved" ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"
-                }`}
-              >
-                {user.status === "approved" ? "Active Account" : "Pending Approval"}
+                className={`${user.status === "active" ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"}`}
+              > 
+                {user.status === "active" ? "Active Account" : "Pending Approval"}
               </Badge>
             </div>
           </div>
@@ -74,19 +123,18 @@ export default function CustomerProfilePage() {
       </div>
 
       {/* Profile Information Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Main Profile Card */}
-        <div className="lg:col-span-2">
-          <Card>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Profile Details Card */}
+        <Card>
             <CardHeader>
-              <CardTitle>Account Details</CardTitle>
+              <CardTitle>Profile Details</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 <div className="flex items-center">
                   <User className="w-5 h-5 mr-3 text-muted-foreground" />
                   <span className="text-sm font-medium w-32">Full Name</span>
-                  <span className="text-sm text-muted-foreground">{user.name}</span>
+                  <span className="text-sm text-muted-foreground">{user.username}</span>
                 </div>
                 <div className="flex items-center">
                   <Mail className="w-5 h-5 mr-3 text-muted-foreground" />
@@ -107,12 +155,9 @@ export default function CustomerProfilePage() {
                 </div>
               </div>
             </CardContent>
-          </Card>
-        </div>
+        </Card>
 
-        {/* Account Information */}
-        <div className="space-y-6">
-          {/* Account Details */}
+        {/* Account Details Card */}
           <Card className="shadow-sm">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -141,17 +186,16 @@ export default function CustomerProfilePage() {
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm text-gray-600">Status</span>
-                <Badge
+                <Badge 
                   variant="secondary"
-                  className={`${user.status === "approved" ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"}`}
+                  className={`${user.status === "active" ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"}`}
                 >
-                  {user.status === "approved" ? "Active" : "Inactive"}
+                  {user.status === "active" ? "Active" : "Inactive"}
                 </Badge>
               </div>
             </CardContent>
           </Card>
 
-          {/* Promoter Details */}
           {promoter && (
             <Card>
               <CardHeader>
@@ -184,20 +228,62 @@ export default function CustomerProfilePage() {
             </Card>
           )}
 
-          {/* Security Notice */}
-          <Card className="shadow-sm border-amber-200 bg-amber-50">
-            <CardContent className="p-4">
-              <div className="flex items-start space-x-3">
-                <Shield className="w-5 h-5 text-amber-600 mt-0.5" />
-                <div>
-                  <p className="text-sm font-medium text-amber-800">Security Notice</p>
-                  <p className="text-xs text-amber-700 mt-1">
-                    Your profile information is currently read-only. Contact your promoter to make changes.
-                  </p>
-                </div>
-              </div>
+        {/* Season Timeline */}
+        {user.seasons.length > 0 && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <TrendingUp className="w-5 h-5 text-blue-600" />
+                Season Timeline
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {user.seasons.map((season: any) => {
+                const { currentMonth, totalMonths, progress } = calculateSeasonProgress(season.startDate, season.endDate)
+                const status = getSeasonStatus(season.startDate, season.endDate)
+                return (
+                  <div key={season._id} className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium">{season.season}</span>
+                      <Badge variant="secondary" className={getStatusColor(status)}>
+                        {status}
+                      </Badge>
+                    </div>
+                    <Progress value={progress} className="h-2" />
+                    <div className="flex items-center justify-between text-xs text-muted-foreground">
+                      <span>
+                        {new Date(season.startDate).toLocaleDateString("en-US", { month: "short", year: "numeric" })}
+                      </span>
+                      <span className="font-medium">
+                        Month {Math.min(currentMonth, totalMonths)} of {totalMonths}
+                      </span>
+                      <span>{new Date(season.endDate).toLocaleDateString("en-US", { month: "short", year: "numeric" })}</span>
+                    </div>
+                  </div>
+                )
+              })}
+              {user.seasons.length === 0 && (
+                <p className="text-sm text-muted-foreground text-center">Not enrolled in any seasons.</p>
+              )}
             </CardContent>
           </Card>
+        )}
+        {/* Security Notice Card - spans both columns */}
+        <div className="col-span-2 justify-center flex items-center">
+
+        <Card className=" shadow-sm border-amber-200 bg-amber-50">
+          <CardContent className="px-4 md:px-8">
+            <div className="flex items-start space-x-3">
+              <Shield className="w-5 h-5 text-amber-600 mt-0.5" />
+              <div>
+                <p className="text-sm font-medium text-amber-800">Security Notice</p>
+                <p className="text-xs text-amber-700 mt-1">
+                  Your profile information is currently read-only. Contact your promoter to make changes.
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
         </div>
       </div>
     </div>

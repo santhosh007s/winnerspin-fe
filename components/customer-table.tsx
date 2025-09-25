@@ -68,7 +68,7 @@ export function CustomerTable() {
               </TableHeader>
               <TableBody>
                 {customers.map((customer) => (
-                  <TableRow key={customer.id}>
+                  <TableRow key={customer._id}>
                     <TableCell className="font-medium">{customer.username}</TableCell>
                     <TableCell>{customer.email}</TableCell>
                     <TableCell>{customer.mobile}</TableCell>

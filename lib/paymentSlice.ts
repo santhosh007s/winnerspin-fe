@@ -48,7 +48,7 @@ export const addPaymentDetails = createAsyncThunk(
   async (paymentDetails: Omit<PaymentDetails, "_id">, { getState, rejectWithValue }) => {
     const state = getState() as RootState
     try {
-      const response = await fetch("/api/promoter/add-payment-details", {
+      const response = await fetch(`/api/promoter/add-payment-details?seasonId=${state.season.currentSeason?._id}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
