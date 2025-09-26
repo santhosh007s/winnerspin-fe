@@ -15,6 +15,7 @@ import customerAuthSlice from "./customerAuthSlice";
 import customerProfileSlice from "./customerProfileSlice";
 import installmentsSlice from "./installmentsSlice";
 import promoterSlice from "./promoterSlice";
+import customerPosterSlice from "./customerPosterSlice";
 
 export const store = configureStore({
   reducer: {
@@ -33,6 +34,7 @@ export const store = configureStore({
     customerProfile: customerProfileSlice,
     installments: installmentsSlice,
     promoter: promoterSlice,
+    customerPoster: customerPosterSlice,
   },
 });
 

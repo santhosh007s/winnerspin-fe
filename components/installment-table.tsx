@@ -34,11 +34,11 @@ export function InstallmentTable({ installments }: InstallmentTableProps) {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "paid":
-        return <Badge className="bg-green-100 text-green-800 hover:bg-green-100">Paid</Badge>
+        return <Badge className="bg-green-100 text-green-800 ">Paid</Badge>
       case "due":
-        return <Badge className="bg-orange-100 text-orange-800 hover:bg-orange-100">Due</Badge>
+        return <Badge className="bg-orange-100 text-orange-800 ">Due</Badge>
       case "overdue":
-        return <Badge className="bg-red-100 text-red-800 hover:bg-red-100">Overdue</Badge>
+        return <Badge className="bg-red-100 text-red-800 ">Overdue</Badge>
       default:
         return <Badge variant="secondary">Unknown</Badge>
     }
@@ -76,7 +76,7 @@ export function InstallmentTable({ installments }: InstallmentTableProps) {
         </TableHeader>
         <TableBody>
           {installments.map((installment) => (
-            <TableRow key={installment.id} className="hover:bg-gray-50">
+            <TableRow key={installment.id} className="">
               <TableCell className="font-medium">#{installment.installmentNumber}</TableCell>
               <TableCell>
                 <div className="flex items-center space-x-2">

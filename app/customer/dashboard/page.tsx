@@ -6,6 +6,7 @@ import { fetchCustomerProfile } from "@/lib/customerProfileSlice"
 import { fetchInstallmentSummary } from "@/lib/installmentsSlice"
 import { StatCard } from "@/components/stat-card"
 import { QuickActionsCard } from "@/components/quick-actions-card"
+import { NewPosterPopup } from "@/components/new-poster-popup"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { Loader2, DollarSign, Calendar, CheckCircle, AlertCircle, TrendingUp } from "lucide-react"
@@ -27,8 +28,8 @@ export default function CustomerDashboard() {
     return (
       <div className="flex items-center justify-center min-h-96">
         <div className="text-center">
-          <Loader2 className="w-8 h-8 animate-spin text-blue-600 mx-auto mb-4" />
-          <p className="text-gray-600">Loading your dashboard...</p>
+          <Loader2 className="w-8 h-8 animate-spin text-primary mx-auto mb-4" />
+          <p className="text-muted-foreground">Loading your dashboard...</p>
         </div>
       </div>
     )
@@ -40,16 +41,18 @@ export default function CustomerDashboard() {
 
   return (
     <div className="space-y-6">
+      <NewPosterPopup audience="customer" />
+
       {/* Welcome Section */}
-      <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-teal-600 rounded-xl p-6 text-white">
+      <div className="relative overflow-hidden rounded-xl p-6 text-primary-foreground bg-gradient-to-br from-primary to-primary/50">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold mb-2">Welcome back, {profile?.name?.split(" ")[0]}!</h1>
-            <p className="text-blue-100">Here's an overview of your account status</p>
+            <p className="text-primary-foreground/80">Here's an overview of your account status</p>
           </div>
           <div className="hidden sm:block">
-            <div className="bg-white/20 backdrop-blur-sm rounded-lg p-4">
-              <p className="text-sm text-blue-100">Account Status</p>
+            <div className="bg-primary-foreground/10 backdrop-blur-sm rounded-lg p-4 border border-primary-foreground/20">
+              <p className="text-sm text-primary-foreground/80">Account Status</p>
               <p className="text-lg font-semibold">{profile?.status === "active" ? "Active" : "Inactive"}</p>
             </div>
           </div>
@@ -64,8 +67,8 @@ export default function CustomerDashboard() {
           icon={DollarSign}
           trend="+12%"
           trendUp={true}
-          className="bg-gradient-to-br from-green-50 to-emerald-50 border-green-200"
-          iconColor="text-green-600"
+          className="bg-card"
+          iconColor="text-green-500"
         />
         <StatCard
           title="Balance Due"
@@ -73,8 +76,8 @@ export default function CustomerDashboard() {
           icon={Calendar}
           trend={summary?.overdueCount ? `${summary.overdueCount} overdue` : "On track"}
           trendUp={!summary?.overdueCount}
-          className="bg-gradient-to-br from-orange-50 to-amber-50 border-orange-200"
-          iconColor="text-orange-600"
+          className="bg-card"
+          iconColor="text-orange-500"
         />
         <StatCard
           title="Paid Installments"
@@ -82,8 +85,8 @@ export default function CustomerDashboard() {
           icon={CheckCircle}
           trend={`${summary?.dueCount || 0} remaining`}
           trendUp={true}
-          className="bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-200"
-          iconColor="text-blue-600"
+          className="bg-card"
+          iconColor="text-primary"
         />
         <StatCard
           title="Payment Progress"
@@ -91,8 +94,8 @@ export default function CustomerDashboard() {
           icon={TrendingUp}
           trend="Overall progress"
           trendUp={paymentProgress > 50}
-          className="bg-gradient-to-br from-purple-50 to-violet-50 border-purple-200"
-          iconColor="text-purple-600"
+          className="bg-card"
+          iconColor="text-purple-500"
         />
       </div>
 
@@ -102,29 +105,29 @@ export default function CustomerDashboard() {
           <Card className="shadow-sm">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <TrendingUp className="w-5 h-5 text-blue-600" />
+                <TrendingUp className="w-5 h-5 text-primary" />
                 Payment Progress
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-600">Overall Progress</span>
+                  <span className="text-muted-foreground">Overall Progress</span>
                   <span className="font-medium">{Math.round(paymentProgress)}% Complete</span>
                 </div>
                 <Progress value={paymentProgress} className="h-3" />
                 <div className="grid grid-cols-3 gap-4 text-center">
-                  <div className="bg-green-50 rounded-lg p-3">
-                    <p className="text-2xl font-bold text-green-600">{summary?.paidCount || 0}</p>
-                    <p className="text-sm text-green-700">Paid</p>
+                  <div className="bg-green-500/10 rounded-lg p-3">
+                    <p className="text-2xl font-bold text-green-500">{summary?.paidCount || 0}</p>
+                    <p className="text-sm text-green-600">Paid</p>
                   </div>
-                  <div className="bg-orange-50 rounded-lg p-3">
-                    <p className="text-2xl font-bold text-orange-600">{summary?.dueCount || 0}</p>
-                    <p className="text-sm text-orange-700">Due</p>
+                  <div className="bg-orange-500/10 rounded-lg p-3">
+                    <p className="text-2xl font-bold text-orange-500">{summary?.dueCount || 0}</p>
+                    <p className="text-sm text-orange-600">Due</p>
                   </div>
-                  <div className="bg-red-50 rounded-lg p-3">
-                    <p className="text-2xl font-bold text-red-600">{summary?.overdueCount || 0}</p>
-                    <p className="text-sm text-red-700">Overdue</p>
+                  <div className="bg-red-500/10 rounded-lg p-3">
+                    <p className="text-2xl font-bold text-red-500">{summary?.overdueCount || 0}</p>
+                    <p className="text-sm text-red-600">Overdue</p>
                   </div>
                 </div>
               </div>

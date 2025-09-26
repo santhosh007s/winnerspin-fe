@@ -302,7 +302,7 @@ export default function ProfilePage() {
             )}
 
             <div className="flex gap-2">
-              <Button variant="outline" onClick={handleLogout}>
+              <Button className="bg-destructive/10 border-destructive/20 text-destructive hover:bg-destructive/20 hover:text-destructive transition-colors justify-center" onClick={handleLogout}>
                 Sign Out
               </Button>
             </div>

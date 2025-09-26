@@ -23,8 +23,8 @@ export default function CustomerProfilePage() {
     return (
       <div className="flex items-center justify-center min-h-96">
         <div className="text-center">
-          <Loader2 className="w-8 h-8 animate-spin text-blue-600 mx-auto mb-4" />
-          <p className="text-gray-600">Loading your profile...</p>
+          <Loader2 className="w-8 h-8 animate-spin text-primary mx-auto mb-4" />
+          <p className="text-muted-foreground">Loading your profile...</p>
         </div>
       </div>
     )
@@ -33,7 +33,7 @@ export default function CustomerProfilePage() {
   if (error) {
     return (
       <div className="text-center py-12">
-        <p className="text-red-600 mb-4">Failed to load profile: {error}</p>
+        <p className="text-destructive mb-4">Failed to load profile: {error}</p>
       </div>
     )
   }
@@ -41,7 +41,7 @@ export default function CustomerProfilePage() {
   if (!user) {
     return (
       <div className="text-center py-12">
-        <p className="text-gray-600">No profile data available</p>
+        <p className="text-muted-foreground">No profile data available</p>
       </div>
     )
   }
@@ -63,17 +63,19 @@ export default function CustomerProfilePage() {
 
     if (now < start) return "upcoming"
     if (now > end) return "completed"
-    return "active"
+    return "live"
   }
 
   const getStatusColor = (status: string) => {
     switch (status) {
       case "active":
-        return "bg-green-100 text-green-800"
+        return "bg-green-500/10 text-green-600"
+      case "live":
+        return "bg-green-500/10 text-green-600"
       case "upcoming":
-        return "bg-blue-100 text-blue-800"
+        return "bg-blue-500/10 text-blue-600"
       default: // completed
-        return "bg-gray-100 text-gray-800"
+        return "bg-muted text-muted-foreground"
     }
   }
 
@@ -98,22 +100,22 @@ export default function CustomerProfilePage() {
   }
   console.log(user.status)
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-8">
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-teal-600 rounded-xl p-6 text-white">
+      <div className=" bg-gradient-to-br from-primary to-primary/20 rounded-xl p-6 text-primary-foreground">
         <div className="flex items-center space-x-4">
           <Avatar className="w-16 h-16 border-4 border-white/20">
-            <AvatarFallback className="bg-white/20 text-white text-xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600">
+            <AvatarFallback className="bg-primary-foreground/20 text-primary-foreground text-xl font-bold">
               {getUserInitials(user.name)}
             </AvatarFallback>
           </Avatar>
           <div>
             <h1 className="text-2xl font-bold">{user.name}</h1>
-            <p className="text-blue-100">Customer Profile</p>
+            <p className="text-primary-foreground/80">Customer Profile</p>
             <div className="flex items-center mt-2">
               <Badge
                 variant="secondary"
-                className={`${user.status === "active" ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"}`}
+                className={`${user.status === "active" ? "bg-green-400/20 text-white" : "bg-muted text-muted-foreground"}`}
               > 
                 {user.status === "active" ? "Active Account" : "Pending Approval"}
               </Badge>
@@ -123,7 +125,7 @@ export default function CustomerProfilePage() {
       </div>
 
       {/* Profile Information Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="lg:grid space-y-6 lg:space-y-0 lg:grid-cols-2 lg:gap-6">
         {/* Profile Details Card */}
         <Card>
             <CardHeader>
@@ -161,21 +163,21 @@ export default function CustomerProfilePage() {
           <Card className="shadow-sm">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Shield className="w-5 h-5 text-blue-600" />
+                <Shield className="w-5 h-5 text-primary" />
                 Account Details
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">Account ID</span>
+                <span className="text-sm text-muted-foreground">Account ID</span>
                 <span className="text-sm font-medium truncate">{user._id}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">Card Number</span>
+                <span className="text-sm text-muted-foreground">Card Number</span>
                 <span className="text-sm font-medium font-mono">{user.cardNo}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">Member Since</span>
+                <span className="text-sm text-muted-foreground">Member Since</span>
                 <span className="text-sm font-medium">
                   {new Date(user.createdAt).toLocaleDateString("en-US", {
                     year: "numeric",
@@ -185,10 +187,10 @@ export default function CustomerProfilePage() {
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">Status</span>
+                <span className="text-sm text-muted-foreground">Status</span>
                 <Badge 
                   variant="secondary"
-                  className={`${user.status === "active" ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"}`}
+                  className={`${user.status === "active" ? "bg-green-500/10 text-green-600" : "bg-muted text-muted-foreground"}`}
                 >
                   {user.status === "active" ? "Active" : "Inactive"}
                 </Badge>
@@ -233,7 +235,7 @@ export default function CustomerProfilePage() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <TrendingUp className="w-5 h-5 text-blue-600" />
+                <TrendingUp className="w-5 h-5 text-primary" />
                 Season Timeline
               </CardTitle>
             </CardHeader>
@@ -271,13 +273,13 @@ export default function CustomerProfilePage() {
         {/* Security Notice Card - spans both columns */}
         <div className="col-span-2 justify-center flex items-center">
 
-        <Card className=" shadow-sm border-amber-200 bg-amber-50">
+        <Card className=" shadow-sm border-yellow-500/20 bg-yellow-500/10">
           <CardContent className="px-4 md:px-8">
             <div className="flex items-start space-x-3">
-              <Shield className="w-5 h-5 text-amber-600 mt-0.5" />
+              <Shield className="w-5 h-5 text-yellow-600 mt-0.5" />
               <div>
-                <p className="text-sm font-medium text-amber-800">Security Notice</p>
-                <p className="text-xs text-amber-700 mt-1">
+                <p className="text-sm font-medium text-yellow-800 dark:text-yellow-300">Security Notice</p>
+                <p className="text-xs text-yellow-700 dark:text-yellow-400 mt-1">
                   Your profile information is currently read-only. Contact your promoter to make changes.
                 </p>
               </div>

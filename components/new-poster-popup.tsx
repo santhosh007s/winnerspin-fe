@@ -2,33 +2,49 @@
 
 import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import Image from "next/image"
+import Image, { type ImageProps } from "next/image"
 import { Dialog, DialogContent } from "@/components/ui/dialog"
 import { fetchNewPoster } from "@/lib/posterSlice"
+import { fetchCustomerNewPoster } from "@/lib/customerPosterSlice"
 import type { AppDispatch, RootState } from "@/lib/store"
 import { X } from "lucide-react"
 
-const POPUP_SHOWN_KEY = "newPosterPopupShown"
+interface NewPosterPopupProps {
+  audience: "promoter" | "customer"
+}
 
-export function NewPosterPopup() {
+export function NewPosterPopup({ audience }: NewPosterPopupProps) {
   const [isOpen, setIsOpen] = useState(false)
   const dispatch = useDispatch<AppDispatch>()
-  const { newPoster } = useSelector((state: RootState) => state.poster)
-  const { currentSeason } = useSelector((state: RootState) => state.season)
+
+  const POPUP_SHOWN_KEY = `newPosterPopupShown_${audience}`
+
+  const { newPoster } = useSelector((state: RootState) =>
+    audience === "promoter" ? state.poster : state.customerPoster
+  )
+  const promoterSeason = useSelector((state: RootState) => state.season.currentSeason)
+  const customerSeasonId = useSelector((state: RootState) => state.customerAuth.seasonId)
+
+  // Determine if there is a valid season context to proceed
+  const hasValidSeason = audience === "promoter" ? !!promoterSeason : !!customerSeasonId
 
   useEffect(() => {
     const hasBeenShown = sessionStorage.getItem(POPUP_SHOWN_KEY)
-    if (currentSeason && !hasBeenShown) {
-      dispatch(fetchNewPoster())
+    if (hasValidSeason && !hasBeenShown) {
+      if (audience === "promoter") {
+        dispatch(fetchNewPoster())
+      } else {
+        dispatch(fetchCustomerNewPoster())
+      }
     }
-  }, [dispatch, currentSeason])
+  }, [dispatch, hasValidSeason, audience, POPUP_SHOWN_KEY])
 
   useEffect(() => {
     if (newPoster?.url) {
       setIsOpen(true)
       sessionStorage.setItem(POPUP_SHOWN_KEY, "true")
     }
-  }, [newPoster])
+  }, [newPoster, POPUP_SHOWN_KEY])
 
   if (!isOpen || !newPoster?.url) {
     return null
@@ -41,8 +57,8 @@ export function NewPosterPopup() {
           <Image
             src={newPoster.url}
             alt="Promotional Poster"
-            layout="fill"
-            objectFit="contain"
+            fill
+            style={{ objectFit: "contain" }}
           />
           <button onClick={() => setIsOpen(false)} className="absolute right-0  md:-right-10  text-white bg-black/50 rounded-full p-1.5 z-10 hover:bg-black dark:bg-neutral-400/20 dark:hover:bg-neutral-400/50 transition-colors">
             <X className="h-5 w-5 rounded-full hover:scale-110 transition-colors" />

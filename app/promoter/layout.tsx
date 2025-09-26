@@ -56,9 +56,9 @@ export default function PromoterLayout({
 
   return (
     <ThemeProvider>
-      <div className="min-h-screen bg-background">
+      <div className="overflow-y-auto overscroll-none  min-h-screen bg-background">
         <Sidebar />
-        <div className="lg:pl-64 pb-16 lg:pb-0">
+        <div className=" lg:pl-64 pb-16 lg:pb-0">
           <main className="p-6">{children}</main>
         </div>
         <MobileNav />

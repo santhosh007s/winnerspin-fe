@@ -43,10 +43,10 @@ export function AuthGuard({ children }: AuthGuardProps) {
   // Show loading spinner while checking authentication
   if (isVerifying && !isPublicPage) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-transparent">
         <div className="text-center">
-          <Loader2 className="w-8 h-8 animate-spin text-blue-600 mx-auto mb-4" />
-          <p className="text-gray-600">Verifying your session...</p>
+          <Loader2 className="w-8 h-8 animate-spin text-primary mx-auto mb-4" />
+          <p className="text-muted-foreground">Verifying your session...</p>
         </div>
       </div>
     )

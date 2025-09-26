@@ -29,19 +29,19 @@ export function CustomerNavbar() {
   }
 
   return (
-    <header className="bg-white dark:bg-gray-900 shadow-sm border-b border-gray-200 dark:border-gray-800">
+    <header className="bg-card shadow-sm border-b border-border">
       <div className="px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Left side - Welcome message */}
           <div className="flex-1">
             <div className="hidden sm:block">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+              <h2 className="text-lg font-semibold text-foreground">
                 Welcome back, {user ? user.name?.split(" ")[0] : "Customer"}!
               </h2>
-              <p className="text-sm text-gray-500 dark:text-gray-400">{getCurrentTime()}</p>
+              <p className="text-sm text-muted-foreground">{getCurrentTime()}</p>
             </div>
             <div className="sm:hidden">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Dashboard</h2>
+              <h2 className="text-lg font-semibold text-foreground">Dashboard</h2>
             </div>
           </div>
 
@@ -52,21 +52,21 @@ export function CustomerNavbar() {
 
             {/* Notifications */}
             <Button variant="ghost" size="sm" className="relative">
-              <Bell className="w-5 h-5 text-gray-600 dark:text-gray-300" />
-              <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+              <Bell className="w-5 h-5 text-muted-foreground" />
+              <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full"></span>
             </Button>
 
             {/* User avatar - desktop only */}
             {user && (
               <div className="hidden lg:flex items-center space-x-3">
                 <Avatar className="w-8 h-8">
-                  <AvatarFallback className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-sm font-medium">
+                  <AvatarFallback className="bg-primary text-primary-foreground text-sm font-medium">
                     {getUserInitials(user.name)}
                   </AvatarFallback>
                 </Avatar>
                 <div className="text-sm">
-                  <p className="font-medium text-gray-900 dark:text-gray-100">{user.name}</p>
-                  <p className="text-gray-500 dark:text-gray-400">Customer</p>
+                  <p className="font-medium text-foreground">{user.name}</p>
+                  <p className="text-muted-foreground">Customer</p>
                 </div>
               </div>
             )}

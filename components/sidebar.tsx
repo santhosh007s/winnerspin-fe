@@ -3,7 +3,7 @@ import { useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useSelector, useDispatch } from "react-redux"
-import { LayoutDashboard, Users, CreditCard, Wallet, ArrowDownToLine, User, Menu, X } from "lucide-react"
+import { LayoutDashboard, Users, CreditCard, Wallet, ArrowDownToLine, User, Menu, X, LogOut } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { logout } from "@/lib/authSlice"
@@ -84,8 +84,8 @@ export function Sidebar() {
 
           {/* Footer */}
           <div className="p-4 border-t border-sidebar-border">
-            <Button variant="outline" className="w-full bg-transparent" onClick={handleLogout}>
-              Sign Out
+            <Button className="bg-destructive/10 border-destructive/20 text-destructive hover:bg-destructive/20 hover:text-destructive transition-colors w-full justify-center" onClick={handleLogout}>
+              <LogOut /> Sign Out
             </Button>
           </div>
         </div>

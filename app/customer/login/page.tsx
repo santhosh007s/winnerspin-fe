@@ -50,38 +50,38 @@ export default function CustomerLogin() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-teal-50 flex items-center justify-center p-4">
+    <div className="customer-theme min-h-screen bg-background flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full mb-4">
-            <CreditCard className="w-8 h-8 text-white" />
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-primary rounded-full mb-4">
+            <CreditCard className="w-8 h-8 text-primary-foreground" />
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Customer Portal</h1>
-          <p className="text-gray-600">Access your account with your card details</p>
+          <h1 className="text-3xl font-bold text-foreground mb-2">Customer Portal</h1>
+          <p className="text-muted-foreground">Access your account with your card details</p>
         </div>
 
-        <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
+        <Card className="shadow-xl border-border bg-card">
           <CardHeader className="space-y-1 pb-6">
             <CardTitle className="text-2xl font-semibold text-center">Sign In</CardTitle>
-            <CardDescription className="text-center text-gray-600">
+            <CardDescription className="text-center text-muted-foreground">
               Enter your card number and password to continue
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="cardNumber" className="text-sm font-medium text-gray-700">
+                <Label htmlFor="cardNumber" className="text-sm font-medium">
                   Card Number
                 </Label>
                 <div className="relative">
-                  <CreditCard className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                  <CreditCard className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
                   <Input
                     id="cardNumber"
                     type="text"
                     placeholder="E.g., WS11002"
                     value={cardNumber}
                     onChange={handleCardNumberChange}
-                    className="pl-10 h-12 text-lg tracking-wider"
+                    className="pl-10 h-12 text-lg tracking-wider bg-background"
                     disabled={isLoading}
                     required
                   />
@@ -89,18 +89,18 @@ export default function CustomerLogin() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password" className="text-sm font-medium text-gray-700">
+                <Label htmlFor="password" className="text-sm font-medium">
                   Password
                 </Label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
                   <Input
                     id="password"
                     type="password"
                     placeholder="Enter your password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="pl-10 h-12"
+                    className="pl-10 h-12 bg-background"
                     disabled={isLoading}
                     required
                   />
@@ -108,14 +108,14 @@ export default function CustomerLogin() {
               </div>
 
               {error && (
-                <Alert variant="destructive" className="bg-red-50 border-red-200">
-                  <AlertDescription className="text-red-800">{error}</AlertDescription>
+                <Alert variant="destructive">
+                  <AlertDescription>{error}</AlertDescription>
                 </Alert>
               )}
 
               <Button
                 type="submit"
-                className="w-full h-12 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-medium text-lg shadow-lg hover:shadow-xl transition-all duration-200"
+                className="w-full h-12 text-lg"
                 disabled={isLoading || !cardNumber.trim() || !password.trim()}
               >
                 {isLoading ? (
@@ -130,9 +130,9 @@ export default function CustomerLogin() {
             </form>
 
             <div className="mt-6 text-center">
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-muted-foreground">
                 Need help accessing your account?{" "}
-                <button className="text-blue-600 hover:text-blue-700 font-medium hover:underline">
+                <button className="text-primary hover:underline font-medium">
                   Contact Support
                 </button>
               </p>
@@ -141,7 +141,7 @@ export default function CustomerLogin() {
         </Card>
 
         <div className="mt-6 text-center">
-          <p className="text-xs text-gray-500">Your information is protected with bank-level security</p>
+          <p className="text-xs text-muted-foreground">Your information is protected with bank-level security</p>
         </div>
       </div>
     </div>

@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { loginPromoter } from "@/lib/authSlice"
 import type { AppDispatch, RootState } from "@/lib/store"
+import { ThemeProvider } from "@/components/theme-provider"
 
 export default function PromoterLogin() {
   const [username, setUsername] = useState("")
@@ -31,6 +32,7 @@ export default function PromoterLogin() {
   }
 
   return (
+  <ThemeProvider>
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
@@ -54,7 +56,7 @@ export default function PromoterLogin() {
                 onChange={(e) => setUsername(e.target.value)}
                 placeholder="Enter your username"
                 required
-              />
+                />
             </div>
 
             <div className="space-y-2">
@@ -66,7 +68,7 @@ export default function PromoterLogin() {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter your password"
                 required
-              />
+                />
             </div>
 
             <Button type="submit" className="w-full" disabled={isLoading}>
@@ -76,5 +78,6 @@ export default function PromoterLogin() {
         </CardContent>
       </Card>
     </div>
+  </ThemeProvider>
   )
 }

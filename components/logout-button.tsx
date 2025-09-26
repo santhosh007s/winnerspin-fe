@@ -14,7 +14,7 @@ interface LogoutButtonProps {
 }
 
 export function LogoutButton({
-  variant = "ghost",
+  variant = "default",
   size = "default",
   showIcon = true,
   className = "",

@@ -51,7 +51,7 @@ export function CustomerSidebar() {
           variant="outline"
           size="sm"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className="bg-white shadow-md"
+          className="bg-card shadow-md"
         >
           {isMobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
         </Button>
@@ -60,7 +60,7 @@ export function CustomerSidebar() {
       {/* Mobile menu overlay */}
       {isMobileMenuOpen && (
         <div
-          className="lg:hidden fixed inset-0 z-40 bg-black bg-opacity-50"
+          className="lg:hidden fixed inset-0 z-40 bg-black/50"
           onClick={() => setIsMobileMenuOpen(false)}
         />
       )}
@@ -81,7 +81,7 @@ export function CustomerSidebar() {
             {user ? (
               <div className="flex items-center space-x-3">
                 <Avatar className="w-10 h-10">
-                  <AvatarFallback className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium">
+                  <AvatarFallback className="bg-primary text-primary-foreground font-medium">
                     {getUserInitials(user.name)}
                   </AvatarFallback>
                 </Avatar>
@@ -127,8 +127,8 @@ export function CustomerSidebar() {
           </nav>
 
           {/* Footer */}
-          <div className="p-4 border-t border-sidebar-border">
-            <LogoutButton variant="outline" className="w-full justify-center" />
+          <div className="p-4 border-t border-sidebar-border ">
+            <LogoutButton  className="bg-destructive/10 border-destructive/20 text-destructive hover:bg-destructive/20 hover:text-destructive transition-colors w-full justify-center" />
           </div>
         </div>
       </div>

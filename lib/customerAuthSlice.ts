@@ -1,15 +1,19 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit"
 
+interface User {
+  id: string
+  cardNumber: string
+  name: string
+  email: string
+  seasonId: string | null
+}
+
 interface CustomerAuthState {
-  user: {
-    id: string
-    cardNumber: string
-    name: string
-    email: string
-  } | null
+  user: User | null
   isLoading: boolean
   error: string | null
   isAuthenticated: boolean
+  seasonId: string | null
 }
 
 const initialState: CustomerAuthState = {
@@ -17,6 +21,7 @@ const initialState: CustomerAuthState = {
   isLoading: false,
   error: null,
   isAuthenticated: false,
+  seasonId: null,
 }
 
 
@@ -91,6 +96,7 @@ const customerAuthSlice = createSlice({
       state.isAuthenticated = false
       state.error = null
       state.isLoading = false
+      state.seasonId = null
     },
   },
   extraReducers: (builder) => {
@@ -104,6 +110,7 @@ const customerAuthSlice = createSlice({
         state.isLoading = false
         state.user = action.payload.user
         state.isAuthenticated = true
+        state.seasonId = action.payload.user.seasonId
         state.error = null
       })
       .addCase(loginCustomer.rejected, (state, action) => {
@@ -124,6 +131,7 @@ const customerAuthSlice = createSlice({
         state.isLoading = false
         state.user = action.payload.user
         state.isAuthenticated = true
+        state.seasonId = action.payload.user.seasonId
         state.error = null
       })
       .addCase(verifyToken.rejected, (state, action) => {
