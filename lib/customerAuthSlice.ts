@@ -115,7 +115,7 @@ const customerAuthSlice = createSlice({
       })
       .addCase(loginCustomer.rejected, (state, action) => {
         state.isLoading = false
-        state.error = (action.payload as string) || "Login failed"
+        state.error = "Login failed"
         state.isAuthenticated = false
         state.user = null
       })
