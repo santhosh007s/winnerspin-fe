@@ -6,6 +6,7 @@ interface User {
   name: string
   email: string
   seasonId: string | null
+  mustChangePassword?: boolean
 }
 
 interface CustomerAuthState {
@@ -42,6 +43,30 @@ export const loginCustomer = createAsyncThunk(
 
       if (!response.ok) {
         return rejectWithValue(data.message || "Login failed")
+      }
+      return data
+    } catch (error: any) {
+      return rejectWithValue(error.message)
+    }
+  },
+)
+
+// Async thunk for changing password
+export const updatePassword = createAsyncThunk(
+  "customerAuth/updatePassword",
+  async (
+    { currentPassword, newPassword }: { currentPassword?: string; newPassword: string },
+    { rejectWithValue },
+  ) => {
+    try {
+      const response = await fetch("/api/customer/change-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ currentPassword, newPassword }),
+      })
+      const data = await response.json()
+      if (!response.ok) {
+        return rejectWithValue(data.message || "Failed to change password.")
       }
       return data
     } catch (error: any) {
@@ -98,6 +123,11 @@ const customerAuthSlice = createSlice({
       state.isLoading = false
       state.seasonId = null
     },
+    passwordUpdateSuccess: (state) => {
+      if (state.user) {
+        state.user.mustChangePassword = false
+      }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -140,8 +170,12 @@ const customerAuthSlice = createSlice({
         state.user = null
         state.error = (action.payload as string) || "Session expired. Please log in again."
       })
+      .addCase(updatePassword.fulfilled, (state) => {
+        if (state.user) state.user.mustChangePassword = false
+        // No need to set loading or error, dialog handles it
+      })
   },
 })
 
-export const { clearError, resetAuth } = customerAuthSlice.actions
+export const { clearError, resetAuth, passwordUpdateSuccess } = customerAuthSlice.actions
 export default customerAuthSlice.reducer

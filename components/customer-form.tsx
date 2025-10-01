@@ -21,7 +21,6 @@ import type { AppDispatch, RootState } from "@/lib/store"
 
 const getInitialFormData = (seasonAmount?: number) => ({
   username: "",
-  password: "",
   email: "",
   cardNo: "",
   mobile: "",
@@ -34,9 +33,9 @@ const getInitialFormData = (seasonAmount?: number) => ({
 })
 export function CustomerForm() {
   const [open, setOpen] = useState(false)
+  const [formError, setFormError] = useState<string | null>(null)
   const [formData, setFormData] = useState({
     username: "",
-    password: "",
     email: "",
     cardNo: "",
     mobile: "",
@@ -61,11 +60,20 @@ export function CustomerForm() {
     }
   }, [open, currentSeason])
 
+  useEffect(() => {
+    // Clear form-specific errors when the dialog is closed or when the redux error changes
+    if (!open || error) {
+      setFormError(null)
+    }
+  }, [open, error])
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    console.log("Creating Customer ...", formData);
-    console.log("currentSeason", currentSeason);
     if (!currentSeason) {
+      return
+    }
+    if (formData.username.length < 4) {
+      setFormError("Username must be at least 4 characters long.")
       return
     }
     try {
@@ -79,6 +87,7 @@ export function CustomerForm() {
 
       // Reset form and close dialog
       setFormData(getInitialFormData(currentSeason?.amount))
+      setFormError(null)
       setOpen(false)
 
       // Refresh customers list
@@ -107,9 +116,9 @@ export function CustomerForm() {
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {error && (
+          {(error || formError) && (
             <Alert variant="destructive">
-              <AlertDescription>{error}</AlertDescription>
+              <AlertDescription>{error || formError}</AlertDescription>
             </Alert>
           )}
 
@@ -121,6 +130,7 @@ export function CustomerForm() {
                 value={formData.username}
                 onChange={(e) => handleInputChange("username", e.target.value)}
                 placeholder="Enter username"
+                minLength={4}
                 required
               />
             </div>
@@ -133,18 +143,6 @@ export function CustomerForm() {
                 value={formData.email}
                 onChange={(e) => handleInputChange("email", e.target.value)}
                 placeholder="Enter email"
-                required
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                value={formData.password}
-                onChange={(e) => handleInputChange("password", e.target.value)}
-                placeholder="Enter password"
                 required
               />
             </div>

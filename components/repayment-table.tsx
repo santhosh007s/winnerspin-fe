@@ -1,15 +1,19 @@
 "use client"
 import { useEffect } from "react"
 import { format } from "date-fns"
+import jsPDF, { type jsPDF as jsPDFType } from "jspdf"
+import autoTable from "jspdf-autotable"
 import { useDispatch, useSelector } from "react-redux"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { fetchRepayments } from "@/lib/repaymentSlice"
 import type { AppDispatch, RootState } from "@/lib/store"
+import { Button } from "@/components/ui/button"
 import { AddRepaymentForm } from "./add-repayment-form"
 import { Alert, AlertDescription } from "./ui/alert"
 import { fetchCustomers } from "@/lib/customerSlice"
+import { Download } from "lucide-react"
 
 export function RepaymentTable() {
   const dispatch = useDispatch<AppDispatch>()
@@ -20,6 +24,7 @@ export function RepaymentTable() {
   }, [])
   const { repayments, isLoading, error } = useSelector((state: RootState) => state.repayment)
   const { currentSeason } = useSelector((state: RootState) => state.season)
+  const { user: promoter } = useSelector((state: RootState) => state.auth)
   
   useEffect(() => {
     if (currentSeason) {
@@ -49,6 +54,56 @@ export function RepaymentTable() {
 
   const monthHeaders = getMonthHeaders()
 
+  const handleDownloadPdf = () => {
+    if (!repayments.length || !currentSeason) return
+
+    const primaryColor = [10, 163, 163] // Teal
+
+    const doc = new jsPDF({ orientation: "landscape" })
+    const tableColumns = ["Customer", ...monthHeaders.map((month) => format(month, "MMM yyyy"))]
+    const tableRows: string[][] = []
+
+    repayments.forEach((customer) => {
+      const paidInstallmentNumbers = customer.installments.map((inst) => inst.installmentNo)
+      const dueInstallments = customer.dues.map((due) => due.installmentNo)
+
+      const row = [`${customer.customerName} (${customer.cardNo})`]
+      monthHeaders.forEach((_, index) => {
+        const installmentNo = index + 1
+        const isPaid = paidInstallmentNumbers.includes(installmentNo)
+        const isDue = dueInstallments.includes(installmentNo)
+        row.push(isPaid ? "Paid" : isDue ? "Due" : "-")
+      })
+      tableRows.push(row)
+    })
+
+    doc.setFontSize(18)
+    doc.text(`Installment Report - ${currentSeason.season}`, 14, 22)
+    doc.setFontSize(11)
+    doc.setTextColor(100)
+    const pageWidth = doc.internal.pageSize.getWidth()
+    doc.text(`Generated on: ${format(new Date(), "PPP")}`, pageWidth - 14, 22, { align: 'right' })
+
+    let startY = 30
+    if (promoter) {
+      doc.text(`Promoter: ${promoter.username} (ID: ${promoter.userid})`, 14, startY)
+      startY += 7
+    }
+
+    autoTable(doc, {
+      startY: startY + 5,
+      head: [tableColumns],
+      body: tableRows,
+      theme: "striped",
+      headStyles: { fillColor: primaryColor },
+      didDrawPage: (data: any) => {
+        doc.text(`Page ${data.pageNumber}`, data.settings.margin.left, doc.internal.pageSize.height - 10)
+      },
+    })
+
+    doc.save(`repayment_status_${currentSeason.season}_${new Date().toISOString().split("T")[0]}.pdf`)
+  }
+
   if (isLoadingInitial) {
     return (
       <Card>
@@ -69,11 +124,16 @@ export function RepaymentTable() {
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Installment Status</CardTitle>
-        <CardDescription>
-          An overview of all customer dues and payments for the current season.
-        </CardDescription>
+      <CardHeader className="flex flex-row items-center justify-between">
+        <div>
+          <CardTitle>Installment Status</CardTitle>
+          <CardDescription>
+            An overview of all customer dues and payments for the current season.
+          </CardDescription>
+        </div>
+        <Button onClick={handleDownloadPdf} variant="outline" size="sm" className="gap-2" disabled={repayments.length === 0}>
+          <Download className="h-4 w-4" /> Download PDF
+        </Button>
       </CardHeader>
       <CardContent>
         {error && (

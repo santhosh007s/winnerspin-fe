@@ -1,11 +1,14 @@
 "use client"
 import { useEffect } from "react"
+import { format } from "date-fns"
 import { useDispatch, useSelector } from "react-redux"
 import Link from "next/link"
+import jsPDF from "jspdf"
+import autoTable from "jspdf-autotable"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Eye } from "lucide-react"
+import { Eye, Download } from "lucide-react"
 import { fetchCustomers } from "@/lib/customerSlice"
 import type { AppDispatch, RootState } from "@/lib/store"
 import { fetchSeasons } from "@/lib/seasonSlice"
@@ -15,6 +18,7 @@ export function CustomerTable() {
 
   const { customers, isLoading } = useSelector((state: RootState) => state.customer)
   const { currentSeason } = useSelector((state: RootState) => state.season)
+  const { user: promoter } = useSelector((state: RootState) => state.auth)
   useEffect(() => {
     if (currentSeason) {
       dispatch(fetchCustomers(currentSeason._id))
@@ -22,6 +26,55 @@ export function CustomerTable() {
       dispatch(fetchSeasons())
     }
   }, [dispatch, currentSeason])
+
+  const handleDownloadPdf = () => {
+    if (!customers.length) return
+
+    const primaryColor = [10, 163, 163] // Teal
+
+    const doc = new jsPDF()
+    const tableColumns = ["Name","Card No", "Mobile", "Email",  "City", "Joined Date"]
+    const tableRows: (string | number)[][] = []
+
+    customers.forEach((customer) => {
+      const customerData = [
+        customer.username,
+        customer.cardNo,
+        customer.mobile,
+        customer.email,
+        customer.city,
+        format(new Date(customer.createdAt), "dd/MM/yyyy"),
+      ]
+      tableRows.push(customerData)
+    })
+
+    doc.setFontSize(18)
+    doc.text(`Customer List - ${currentSeason?.season || "All Seasons"}`, 14, 22)
+
+    doc.setFontSize(11)
+    doc.setTextColor(100)
+    const pageWidth = doc.internal.pageSize.getWidth()
+    doc.text(`Generated on: ${format(new Date(), "PPP")}`, pageWidth - 14, 22, { align: 'right' })
+
+    let startY = 30
+    if (promoter) {
+      doc.text(`Promoter: ${promoter.username} (ID: ${promoter.userid})`, 14, startY)
+      startY += 7
+    }
+
+    autoTable(doc, {
+      startY: startY + 5,
+      head: [tableColumns],
+      body: tableRows,
+      theme: "striped",
+      headStyles: { fillColor: primaryColor },
+      didDrawPage: (data: any) => {
+        doc.text(`Page ${data.pageNumber}`, data.settings.margin.left, doc.internal.pageSize.height - 10)
+      },
+    })
+
+    doc.save(`customers_${currentSeason?.season || "all"}_${new Date().toISOString().split("T")[0]}.pdf`)
+  }
 
   if (isLoading) {
     return (
@@ -43,9 +96,14 @@ export function CustomerTable() {
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>All Customers</CardTitle>
+      <CardHeader className="flex flex-row items-center justify-between">
+        <div>
+          <CardTitle>All Customers</CardTitle>
         <CardDescription>Manage your customer database</CardDescription>
+        </div>
+        <Button onClick={handleDownloadPdf} variant="outline" size="sm" className="gap-2" disabled={customers.length === 0}>
+          <Download className="h-4 w-4" /> Download PDF
+        </Button>
       </CardHeader>
       <CardContent>
         {customers.length === 0 ? (
@@ -62,7 +120,7 @@ export function CustomerTable() {
                   <TableHead>Mobile</TableHead>
                   <TableHead>Card No</TableHead>
                   <TableHead>City</TableHead>
-                  <TableHead>First Payment</TableHead>
+                  <TableHead>Joined Date</TableHead>
                   <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -74,7 +132,7 @@ export function CustomerTable() {
                     <TableCell>{customer.mobile}</TableCell>
                     <TableCell>{customer.cardNo}</TableCell>
                     <TableCell>{customer.city}</TableCell>
-                    <TableCell>₹{customer.firstPayment.toLocaleString()}</TableCell>
+                    <TableCell>{format(new Date(customer.createdAt), "dd/MM/yyyy")}</TableCell>
                     <TableCell className="flex gap-2">
                       <Button asChild variant="outline" size="sm" className="gap-2 bg-transparent">
                         <Link href={`/promoter/customers/${customer._id}`}>

@@ -9,7 +9,7 @@ export function RecentActivityCard() {
       id: 1,
       type: "payment",
       title: "Payment Received",
-      description: "Installment #12 - $500.00",
+      description: "Installment #12 - ₹500.00",
       date: "2 days ago",
       status: "completed",
       icon: CheckCircle,

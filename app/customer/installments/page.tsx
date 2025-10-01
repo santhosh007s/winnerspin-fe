@@ -44,7 +44,7 @@ export default function CustomerInstallments() {
           <h1 className="text-2xl font-bold text-foreground">Installments</h1>
           <p className="text-muted-foreground">Track your payment history and upcoming dues</p>
         </div>
-        <div className="flex space-x-2">
+        {/* <div className="flex space-x-2">
           <Button variant="outline" size="sm">
             <Filter className="w-4 h-4 mr-1" />
             Filter
@@ -53,7 +53,7 @@ export default function CustomerInstallments() {
             <Download className="w-4 h-4 mr-1" />
             Export
           </Button>
-        </div>
+        </div> */}
       </div>
 
       {/* Summary Cards */}
@@ -64,7 +64,7 @@ export default function CustomerInstallments() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-green-600 mb-1">Total Paid</p>
-                  <p className="text-2xl font-bold text-green-700">${summary.totalPaid.toLocaleString()}</p>
+                  <p className="text-2xl font-bold text-green-700">₹{summary.totalPaid.toLocaleString()}</p>
                   <p className="text-sm text-green-500 mt-1">{summary.paidCount} payments</p>
                 </div>
                 <div className="p-3 rounded-full bg-green-500/20">
@@ -79,7 +79,7 @@ export default function CustomerInstallments() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-orange-600 mb-1">Balance Due</p>
-                  <p className="text-2xl font-bold text-orange-700">${summary.totalDue.toLocaleString()}</p>
+                  <p className="text-2xl font-bold text-orange-700">₹{summary.totalDue.toLocaleString()}</p>
                   <p className="text-sm text-orange-500 mt-1">{summary.dueCount} pending</p>
                 </div>
                 <div className="p-3 rounded-full bg-orange-500/20">
@@ -94,7 +94,7 @@ export default function CustomerInstallments() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-primary/80 mb-1">Total Balance</p>
-                  <p className="text-2xl font-bold text-primary">${summary.totalBalance.toLocaleString()}</p>
+                  <p className="text-2xl font-bold text-primary">₹{summary.totalBalance.toLocaleString()}</p>
                   <p className="text-sm text-primary/70 mt-1">Remaining amount</p>
                 </div>
                 <div className="p-3 rounded-full bg-primary/20">

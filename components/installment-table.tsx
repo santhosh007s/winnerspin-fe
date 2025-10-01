@@ -71,7 +71,7 @@ export function InstallmentTable({ installments }: InstallmentTableProps) {
             <TableHead>Due Date</TableHead>
             <TableHead>Paid Date</TableHead>
             <TableHead>Status</TableHead>
-            <TableHead className="text-right">Actions</TableHead>
+            {/* <TableHead className="text-right">Actions</TableHead> */}
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -84,7 +84,7 @@ export function InstallmentTable({ installments }: InstallmentTableProps) {
                   <span>{installment.description}</span>
                 </div>
               </TableCell>
-              <TableCell className="font-medium">${installment.amount.toLocaleString()}</TableCell>
+              <TableCell className="font-medium">₹{installment.amount.toLocaleString()}</TableCell>
               <TableCell>{formatDate(installment.dueDate)}</TableCell>
               <TableCell>
                 {installment.paidDate ? (
@@ -94,12 +94,12 @@ export function InstallmentTable({ installments }: InstallmentTableProps) {
                 )}
               </TableCell>
               <TableCell>{getStatusBadge(installment.status)}</TableCell>
-              <TableCell className="text-right">
+              {/* <TableCell className="text-right">
                 <Button variant="ghost" size="sm">
                   <Eye className="w-4 h-4 mr-1" />
                   View
                 </Button>
-              </TableCell>
+              </TableCell> */}
             </TableRow>
           ))}
         </TableBody>

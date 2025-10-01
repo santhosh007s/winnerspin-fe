@@ -1,21 +1,25 @@
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useAppDispatch, useAppSelector } from "@/lib/hooks"
 import { fetchCustomerProfile } from "@/lib/customerProfileSlice"
 import type { AppDispatch, RootState } from "@/lib/store"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Progress } from "@/components/ui/progress"
-import { Loader2, User, Mail, Phone, MapPin, UserSquare, Calendar, Shield, Clock, TrendingUp } from "lucide-react"
+import { Loader2, User, Mail, Phone, MapPin, UserSquare, Calendar, Shield, Clock, TrendingUp, KeyRound } from "lucide-react"
+import { ChangePasswordDialog } from "@/components/change-password-dialog"
 
 export default function CustomerProfilePage() {
   const dispatch = useAppDispatch<AppDispatch>()
   const { profile: user, isLoading, error } = useAppSelector((state: RootState) => state.customerProfile)
   const promoter = user?.promoter
+  const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false)
 
   useEffect(() => {
+    if (!user)
     dispatch(fetchCustomerProfile())
   }, [dispatch])
 
@@ -125,6 +129,8 @@ export default function CustomerProfilePage() {
       </div>
 
       {/* Profile Information Grid */}
+      <ChangePasswordDialog open={isPasswordDialogOpen} onOpenChange={setIsPasswordDialogOpen} isFirstTime={false} />
+
       <div className="lg:grid space-y-6 lg:space-y-0 lg:grid-cols-2 lg:gap-6">
         {/* Profile Details Card */}
         <Card>
@@ -194,6 +200,12 @@ export default function CustomerProfilePage() {
                 >
                   {user.status === "active" ? "Active" : "Inactive"}
                 </Badge>
+              </div>
+              <div className="pt-2">
+                <Button variant="outline" onClick={() => setIsPasswordDialogOpen(true)} className="w-full">
+                  <KeyRound className="mr-2 h-4 w-4" />
+                  Change Password
+                </Button>
               </div>
             </CardContent>
           </Card>

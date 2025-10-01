@@ -63,7 +63,7 @@ export default function CustomerDashboard() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatCard
           title="Total Paid"
-          value={`$${summary?.totalPaid?.toLocaleString() || "0"}`}
+          value={`₹${summary?.totalPaid?.toLocaleString() || "0"}`}
           icon={DollarSign}
           trend="+12%"
           trendUp={true}
@@ -72,7 +72,7 @@ export default function CustomerDashboard() {
         />
         <StatCard
           title="Balance Due"
-          value={`$${summary?.totalDue?.toLocaleString() || "0"}`}
+          value={`₹${summary?.totalDue?.toLocaleString() || "0"}`}
           icon={Calendar}
           trend={summary?.overdueCount ? `${summary.overdueCount} overdue` : "On track"}
           trendUp={!summary?.overdueCount}
