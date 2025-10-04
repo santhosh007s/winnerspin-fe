@@ -9,7 +9,6 @@ import { Badge } from "@/components/ui/badge"
 import { PaymentDetailsForm } from "@/components/payment-details-form"
 import { WithdrawalRequestForm } from "@/components/withdrawal-request-form"
 import { fetchEarnings } from "@/lib/walletSlice"
-import { fetchPaymentDetails } from "@/lib/paymentSlice"
 import { fetchWithdrawals } from "@/lib/withdrawalSlice"
 import { fetchSeasons } from "@/lib/seasonSlice"
 import { fetchPromoterProfile } from "@/lib/authSlice"
@@ -36,7 +35,6 @@ export default function WalletPage() {
       if (currentSeason?._id) {
         dispatch(fetchEarnings())
       }
-      dispatch(fetchPaymentDetails())
       dispatch(fetchWithdrawals())
     }
   }, [dispatch, user, currentSeason])

@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit"
 import { RootState } from "./store"
+import { fetchPromoterProfile } from "./authSlice"
 
 export interface PaymentDetails {
   _id: string
@@ -23,25 +24,6 @@ const initialState: PaymentState = {
   isLoading: false,
   error: null,
 }
-
-export const fetchPaymentDetails = createAsyncThunk(
-  "payment/fetchPaymentDetails",
-  async (_, { getState, rejectWithValue }) => {
-    const state = getState() as RootState
-    try {
-      const response = await fetch("/api/promoter/profile", {
-        headers: { token: state.auth.token! },
-      })
-      const data = await response.json()
-      if (!response.ok) {
-        return rejectWithValue(data.message || "Failed to fetch payment details")
-      }
-      return data.promoter.payment
-    } catch (error: any) {
-      return rejectWithValue(error.message)
-    }
-  },
-)
 
 export const addPaymentDetails = createAsyncThunk(
   "payment/addPaymentDetails",
@@ -75,12 +57,19 @@ const paymentSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(fetchPaymentDetails.pending, (state) => {
+      // Listen for the fetchPromoterProfile action
+      .addCase(fetchPromoterProfile.pending, (state) => {
         state.isLoading = true
+        state.error = null
       })
-      .addCase(fetchPaymentDetails.fulfilled, (state, action: PayloadAction<PaymentDetails | null>) => {
+      .addCase(fetchPromoterProfile.fulfilled, (state, action) => {
         state.isLoading = false
-        state.details = action.payload
+        // The payload from fetchPromoterProfile contains the whole promoter object
+        state.details = action.payload.payment || null
+      })
+      .addCase(fetchPromoterProfile.rejected, (state, action) => {
+        state.isLoading = false
+        state.error = (action.payload as string) || "Failed to fetch profile data"
       })
       .addCase(addPaymentDetails.fulfilled, (state, action: PayloadAction<PaymentDetails>) => {
         state.details = action.payload

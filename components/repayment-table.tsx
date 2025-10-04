@@ -160,7 +160,12 @@ export function RepaymentTable() {
               </TableHeader>
               <TableBody>
                 {repayments.map((customer) => {
-                  const paidInstallmentNumbers = customer.installments.map((inst) => inst.installmentNo)
+                  const paidInstallmentNumbers = customer.installments
+                    .filter((inst) => inst.isVerified)
+                    .map((inst) => inst.installmentNo)
+                  const pendingInstallmentNumbers = customer.installments
+                    .filter((inst) => !inst.isVerified)
+                    .map((inst) => inst.installmentNo)
                   const dueInstallments = customer.dues.map((due) => due.installmentNo)
 
                   return (
@@ -172,11 +177,14 @@ export function RepaymentTable() {
                       {monthHeaders.map((month, index) => {
                         const installmentNo = index + 1
                         const isPaid = paidInstallmentNumbers.includes(installmentNo)
+                        const isPending = pendingInstallmentNumbers.includes(installmentNo)
                         const isDue = dueInstallments.includes(installmentNo)
 
                         return (
                           <TableCell key={month.toISOString()} className="text-center">
-                            {isPaid ? (
+                            {isPending ? (
+                              <Badge variant="secondary">Pending</Badge>
+                            ) : isPaid ? (
                               <Badge variant="default">Paid</Badge>
                             ) : isDue ? (
                               <AddRepaymentForm

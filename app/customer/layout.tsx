@@ -19,7 +19,7 @@ export default function CustomerLayout({ children }: { children: React.ReactNode
         {isLoginPage ? (
           <AuthGuard>{children}</AuthGuard>
         ) : (
-          <div className="customer-theme min-h-screen bg-gray-50 dark:bg-gray-900">
+          <div className="customer-theme min-h-screen bg-background pb-10">
             <CustomerSidebar />
             <div className="lg:pl-64">
               <CustomerNavbar />

@@ -30,7 +30,7 @@ export function RepaymentForm() {
     amount: "",
     cardNo: "",
     customerId: "",
-    paymentDate: "",
+    paymentDate: new Date().toISOString().split("T")[0],
   })
   const [popoverOpen, setPopoverOpen] = useState(false)
 

@@ -104,7 +104,7 @@ export default function CustomerProfilePage() {
   }
   console.log(user.status)
   return (
-    <div className="space-y-6 pb-8">
+    <div className="space-y-6">
       {/* Header */}
       <div className=" bg-gradient-to-br from-primary to-primary/20 rounded-xl p-6 text-primary-foreground">
         <div className="flex items-center space-x-4">
@@ -174,10 +174,10 @@ export default function CustomerProfilePage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="flex items-center justify-between">
+              {/* <div className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">Account ID</span>
                 <span className="text-sm font-medium truncate">{user._id}</span>
-              </div>
+              </div> */}
               <div className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">Card Number</span>
                 <span className="text-sm font-medium font-mono">{user.cardNo}</span>

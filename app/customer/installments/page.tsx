@@ -93,9 +93,9 @@ export default function CustomerInstallments() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-primary/80 mb-1">Total Balance</p>
-                  <p className="text-2xl font-bold text-primary">₹{summary.totalBalance.toLocaleString()}</p>
-                  <p className="text-sm text-primary/70 mt-1">Remaining amount</p>
+                  <p className="text-sm font-medium text-muted-foreground/80 mb-1">Total Balance</p>
+                  <p className="text-2xl font-bold text-muted-foreground/80">₹{summary.totalBalance.toLocaleString()}</p>
+                  <p className="text-sm text-muted-foreground/80 mt-1">Remaining amount</p>
                 </div>
                 <div className="p-3 rounded-full bg-primary/20">
                   <DollarSign className="w-6 h-6 text-primary" />
