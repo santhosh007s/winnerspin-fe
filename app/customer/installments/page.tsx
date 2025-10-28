@@ -2,7 +2,7 @@
 
 import { useEffect } from "react"
 import { useAppDispatch, useAppSelector } from "@/lib/hooks"
-import { fetchInstallments, fetchInstallmentSummary } from "@/lib/installmentsSlice"
+import { fetchInstallments, fetchInstallmentSummary } from "@/lib/customer/installmentsSlice"
 import { InstallmentTable } from "@/components/installment-table"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"

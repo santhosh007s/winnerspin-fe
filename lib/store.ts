@@ -1,21 +1,21 @@
 import { configureStore } from "@reduxjs/toolkit";
 
 // Promoter-related slices
-import authSlice from "./authSlice";
+import authSlice from "./promoter/authSlice";
 import seasonSlice from "./seasonSlice";
-import customerSlice from "./customerSlice";
-import repaymentSlice from "./repaymentSlice";
-import walletSlice from "./walletSlice";
-import withdrawalSlice from "./withdrawalSlice";
-import posterSlice from "./posterSlice";
-import paymentReducer from "./paymentSlice";
+import customerSlice from "./customer/customerSlice";
+import repaymentSlice from "./promoter/repaymentSlice";
+import walletSlice from "./promoter/walletSlice";
+import withdrawalSlice from "./promoter/withdrawalSlice";
+import posterSlice from "./promoter/posterSlice";
+import paymentReducer from "./promoter/paymentSlice";
 
 // Customer-related slices
-import customerAuthSlice from "./customerAuthSlice";
-import customerProfileSlice from "./customerProfileSlice";
-import installmentsSlice from "./installmentsSlice";
-import promoterSlice from "./promoterSlice";
-import customerPosterSlice from "./customerPosterSlice";
+import customerAuthSlice from "./customer/customerAuthSlice";
+import customerProfileSlice from "./customer/customerProfileSlice";
+import installmentsSlice from "./customer/installmentsSlice";
+import promoterSlice from "./customer/promoterSlice";
+import customerPosterSlice from "./customer/customerPosterSlice";
 
 export const store = configureStore({
   reducer: {

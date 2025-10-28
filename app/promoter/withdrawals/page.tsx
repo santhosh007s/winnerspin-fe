@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { fetchWithdrawals } from "@/lib/withdrawalSlice"
+import { fetchWithdrawals } from "@/lib/promoter/withdrawalSlice"
 import { fetchSeasons } from "@/lib/seasonSlice"
 import type { AppDispatch, RootState } from "@/lib/store"
 

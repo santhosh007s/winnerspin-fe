@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from "react-redux"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { fetchSeasons, setCurrentSeason } from "@/lib/seasonSlice"
 import type { RootState, AppDispatch } from "@/lib/store"
-import { fetchPromoterProfile } from "@/lib/authSlice"
+import { fetchPromoterProfile } from "@/lib/promoter/authSlice"
 
 export function SeasonSwitcher() {
   const dispatch = useDispatch<AppDispatch>()

@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit"
-import type { RootState } from "./store"
+import type { RootState } from "../store"
 
 interface Poster {
   _id: string

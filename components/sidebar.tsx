@@ -6,7 +6,7 @@ import { useSelector, useDispatch } from "react-redux"
 import { LayoutDashboard, Users, CreditCard, Wallet, ArrowDownToLine, User, Menu, X, LogOut } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
-import { logout } from "@/lib/authSlice"
+import { logout } from "@/lib/promoter/authSlice"
 import type { RootState, AppDispatch } from "@/lib/store"
 
 const navigation = [

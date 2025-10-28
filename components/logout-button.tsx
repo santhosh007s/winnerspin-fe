@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { LogOut, Loader2 } from "lucide-react"
 import { useAppDispatch, useAppSelector } from "@/lib/hooks"
-import { logoutCustomer } from "@/lib/customerAuthSlice"
+import { logoutCustomer } from "@/lib/customer/customerAuthSlice"
 
 interface LogoutButtonProps {
   variant?: "default" | "ghost" | "outline"

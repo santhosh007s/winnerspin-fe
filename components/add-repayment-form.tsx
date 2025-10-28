@@ -14,7 +14,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button"
-import { addRepayment, fetchRepayments } from "@/lib/repaymentSlice"
+import { addRepayment, fetchRepayments } from "@/lib/promoter/repaymentSlice"
 import type { AppDispatch, RootState } from "@/lib/store"
 
 interface AddRepaymentFormProps {

@@ -53,7 +53,7 @@ export function QuickActionsCard() {
                 </div>
                 <div className="text-left">
                   <p className="font-medium text-foreground">{action.title}</p>
-                  <p className="text-sm text-muted-foreground">{action.description}</p>
+                  <p className="text-sm text-muted-foreground text-wrap">{action.description}</p>
                 </div>
               </Button>
             </Link>

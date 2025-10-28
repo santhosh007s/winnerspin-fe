@@ -2,7 +2,7 @@
 
 import { useEffect } from "react"
 import { useAppDispatch, useAppSelector } from "@/lib/hooks"
-import { fetchPromoterDetails } from "@/lib/promoterSlice"
+import { fetchPromoterDetails } from "@/lib/customer/promoterSlice"
 import { PromoterCard } from "@/components/promoter-card"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"

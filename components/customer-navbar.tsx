@@ -51,10 +51,10 @@ export function CustomerNavbar() {
             <ThemeToggle />
 
             {/* Notifications */}
-            <Button variant="ghost" size="sm" className="relative">
+            {/* <Button variant="ghost" size="sm" className="relative">
               <Bell className="w-5 h-5 text-muted-foreground" />
               <span className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full"></span>
-            </Button>
+            </Button> */}
 
             {/* User avatar - desktop only */}
             {user && (
@@ -64,9 +64,9 @@ export function CustomerNavbar() {
                     {getUserInitials(user.name)}
                   </AvatarFallback>
                 </Avatar>
-                <div className="text-sm">
-                  <p className="font-medium text-foreground">{user.name}</p>
-                  <p className="text-muted-foreground">Customer</p>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-sidebar-foreground truncate">{user.name}</p>
+                  <p className="text-xs text-muted-foreground truncate">Card: {user.cardNo || user.cardNumber}</p>
                 </div>
               </div>
             )}

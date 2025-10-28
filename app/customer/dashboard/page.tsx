@@ -2,8 +2,8 @@
 
 import { useEffect } from "react"
 import { useAppDispatch, useAppSelector } from "@/lib/hooks"
-import { fetchCustomerProfile } from "@/lib/customerProfileSlice"
-import { fetchInstallmentSummary } from "@/lib/installmentsSlice"
+import { fetchCustomerProfile } from "@/lib/customer/customerProfileSlice"
+import { fetchInstallmentSummary } from "@/lib/customer/installmentsSlice"
 import { StatCard } from "@/components/stat-card"
 import { QuickActionsCard } from "@/components/quick-actions-card"
 import { NewPosterPopup } from "@/components/new-poster-popup"

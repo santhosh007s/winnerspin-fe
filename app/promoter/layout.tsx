@@ -7,7 +7,7 @@ import { useSelector, useDispatch } from "react-redux"
 import { Sidebar } from "@/components/sidebar"
 import { MobileNav } from "@/components/mobile-nav"
 import type { RootState, AppDispatch } from "@/lib/store"
-import { fetchPromoterProfile } from "@/lib/authSlice"
+import { fetchPromoterProfile } from "@/lib/promoter/authSlice"
 import { fetchSeasons } from "@/lib/seasonSlice"
 import { ThemeProvider } from "@/components/theme-provider"
 

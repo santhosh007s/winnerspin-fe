@@ -16,7 +16,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Plus } from "lucide-react"
-import { createCustomer, fetchCustomers } from "@/lib/customerSlice"
+import { createCustomer, fetchCustomers } from "@/lib/customer/customerSlice"
 import type { AppDispatch, RootState } from "@/lib/store"
 
 const getInitialFormData = (seasonAmount?: number) => ({

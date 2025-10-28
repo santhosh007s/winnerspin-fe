@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert"
 import { User, Mail, MapPin, CreditCard, Edit, Save, X } from "lucide-react"
-import { fetchPromoterProfile, logout, updatePromoterProfile } from "@/lib/authSlice"
+import { fetchPromoterProfile, logout, updatePromoterProfile } from "@/lib/promoter/authSlice"
 import type { RootState, AppDispatch } from "@/lib/store"
 import { fetchSeasons } from "@/lib/seasonSlice"
 

@@ -16,7 +16,8 @@ import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Loader2 } from "lucide-react"
 import { useAppDispatch } from "@/lib/hooks"
-import { updatePassword } from "@/lib/customerAuthSlice"
+import { updatePassword } from "@/lib/customer/customerAuthSlice"
+import { cn } from "@/lib/utils"
 
 interface ChangePasswordDialogProps {
   open: boolean
@@ -78,7 +79,7 @@ export function ChangePasswordDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className={cn("customer-theme", "sm:max-w-[425px]")}>
         <DialogHeader>
           <DialogTitle>{isFirstTime ? "Set Your New Password" : "Change Password"}</DialogTitle>
           <DialogDescription>

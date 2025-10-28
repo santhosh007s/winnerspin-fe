@@ -16,11 +16,11 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { ArrowDownToLine } from "lucide-react"
-import { fetchWithdrawals, requestWithdrawal } from "@/lib/withdrawalSlice"
-import { fetchEarnings } from "@/lib/walletSlice"
+import { fetchWithdrawals, requestWithdrawal } from "@/lib/promoter/withdrawalSlice"
+import { fetchEarnings } from "@/lib/promoter/walletSlice"
 import type { AppDispatch, RootState } from "@/lib/store"
 import { fetchSeasons } from "@/lib/seasonSlice"
-import { fetchPromoterProfile } from "@/lib/authSlice"
+import { fetchPromoterProfile } from "@/lib/promoter/authSlice"
 
 export function WithdrawalRequestForm({ hasPendingWithdrawal }: { hasPendingWithdrawal: boolean }) {
   const [open, setOpen] = useState(false)

@@ -9,7 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Eye, Download } from "lucide-react"
-import { fetchCustomers } from "@/lib/customerSlice"
+import { fetchCustomers } from "@/lib/customer/customerSlice"
 import type { AppDispatch, RootState } from "@/lib/store"
 import { fetchSeasons } from "@/lib/seasonSlice"
 

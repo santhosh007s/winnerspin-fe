@@ -5,7 +5,7 @@ import type React from "react"
 import { useEffect, useState } from "react"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { useAppDispatch, useAppSelector } from "@/lib/hooks"
-import { verifyToken, passwordUpdateSuccess } from "@/lib/customerAuthSlice"
+import { verifyToken, passwordUpdateSuccess } from "@/lib/customer/customerAuthSlice"
 import { Loader2 } from "lucide-react"
 import { ChangePasswordDialog } from "./change-password-dialog"
 

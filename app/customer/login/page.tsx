@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Loader2, CreditCard, Lock } from "lucide-react"
 import { useAppDispatch, useAppSelector } from "@/lib/hooks"
-import { loginCustomer, clearError } from "@/lib/customerAuthSlice"
+import { loginCustomer, clearError } from "@/lib/customer/customerAuthSlice"
 
 export default function CustomerLogin() {
   const [cardNumber, setCardNumber] = useState("")

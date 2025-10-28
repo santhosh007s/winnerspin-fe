@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useAppDispatch, useAppSelector } from "@/lib/hooks"
-import { fetchCustomerProfile } from "@/lib/customerProfileSlice"
+import { fetchCustomerProfile } from "@/lib/customer/customerProfileSlice"
 import type { AppDispatch, RootState } from "@/lib/store"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"

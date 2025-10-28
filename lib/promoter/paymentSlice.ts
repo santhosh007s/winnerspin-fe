@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit"
-import { RootState } from "./store"
+import { RootState } from "../store"
 import { fetchPromoterProfile } from "./authSlice"
 
 export interface PaymentDetails {

@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { loginPromoter } from "@/lib/authSlice"
+import { loginPromoter } from "@/lib/promoter/authSlice"
 import type { AppDispatch, RootState } from "@/lib/store"
 import { ThemeProvider } from "@/components/theme-provider"
 

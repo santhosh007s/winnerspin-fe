@@ -16,7 +16,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { CreditCard, Loader2 } from "lucide-react"
-import { addPaymentDetails } from "@/lib/paymentSlice"
+import { addPaymentDetails } from "@/lib/promoter/paymentSlice"
 import type { AppDispatch, RootState } from "@/lib/store"
 
 export function PaymentDetailsForm() {

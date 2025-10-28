@@ -8,10 +8,10 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge"
 import { PaymentDetailsForm } from "@/components/payment-details-form"
 import { WithdrawalRequestForm } from "@/components/withdrawal-request-form"
-import { fetchEarnings } from "@/lib/walletSlice"
-import { fetchWithdrawals } from "@/lib/withdrawalSlice"
+import { fetchEarnings } from "@/lib/promoter/walletSlice"
+import { fetchWithdrawals } from "@/lib/promoter/withdrawalSlice"
 import { fetchSeasons } from "@/lib/seasonSlice"
-import { fetchPromoterProfile } from "@/lib/authSlice"
+import { fetchPromoterProfile } from "@/lib/promoter/authSlice"
 import type { AppDispatch, RootState } from "@/lib/store"
 
 export default function WalletPage() {
