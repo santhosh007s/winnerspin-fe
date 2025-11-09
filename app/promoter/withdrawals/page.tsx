@@ -19,7 +19,7 @@ export default function WithdrawalsPage() {
     if (!currentSeason) {
       dispatch(fetchSeasons())
     } else if (user?.status === "approved") {
-      dispatch(fetchWithdrawals(currentSeason._id))
+      dispatch(fetchWithdrawals())
     }
   }, [dispatch, user, currentSeason])
 
@@ -87,22 +87,22 @@ export default function WithdrawalsPage() {
                     <TableHead>Amount</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead>Requested Date</TableHead>
-                    <TableHead>Processed Date</TableHead>
+                    {/* <TableHead>Processed Date</TableHead> */}
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {withdrawals.map((withdrawal) => (
-                    <TableRow key={withdrawal.id}>
+                    <TableRow key={withdrawal._id}>
                       <TableCell className="font-semibold text-primary">
                         ₹{withdrawal.amount.toLocaleString()}
                       </TableCell>
                       <TableCell>
                         <Badge variant={getStatusVariant(withdrawal.status)}>{withdrawal.status}</Badge>
                       </TableCell>
-                      <TableCell>{new Date(withdrawal.requestedAt).toLocaleDateString()}</TableCell>
-                      <TableCell>
-                        {withdrawal.status === "Completed" ? new Date(withdrawal.date).toLocaleDateString() : "-"}
-                      </TableCell>
+                      <TableCell>{new Date(withdrawal.createdAt).toLocaleDateString()}</TableCell>
+                      {/* <TableCell>
+                        {withdrawal.status === "approved" ? new Date(withdrawal.date).toLocaleDateString() : "-"}
+                      </TableCell> */}
                     </TableRow>
                   ))}
                 </TableBody>

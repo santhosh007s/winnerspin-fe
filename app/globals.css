@@ -77,84 +77,84 @@
 /* Customer Theme - Light Mode */
 
 .customer-theme {
-  --background: oklch(0.98 0.005 90); /* Very light, slightly warm gray */
-  --foreground: oklch(0.25 0.02 90); /* Dark, slightly warm gray for text */
+  --background: oklch(0.98 0.01 90); /* Very light gray */
+  --foreground: oklch(0.1 0.01 50); /* Very dark gray for text */
   --card: oklch(1 0 0); /* Pure white for cards */
-  --card-foreground: oklch(0.25 0.02 90);
+  --card-foreground: oklch(0.1 0.01 50);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.25 0.02 90);
-  --primary: rgb(255, 224, 98);
-  --primary-foreground: oklch(0.25 0.02 90); /* Dark text on primary color */
-  --secondary: oklch(0.96 0.01 90); /* A subtle, light warm gray */
-  --secondary-foreground: oklch(0.35 0.02 90);
+  --popover-foreground: oklch(0.1 0.01 50);
+  --primary: oklch(0.85 0.19 92); /* Bright Yellow */
+  --primary-foreground: oklch(0.1 0.01 50); /* Dark text on primary */
+  --secondary: oklch(0.75 0.18 50); /* Vibrant Orange */
+  --secondary-foreground: oklch(0.1 0.01 50);
   --muted: oklch(0.96 0.01 90);
-  --muted-foreground: oklch(0.5 0.01 90); /* Softer text color */
-  --accent: oklch(0.96 0.01 90);
-  --accent-foreground: oklch(0.35 0.02 90);
+  --muted-foreground: oklch(0.4 0.01 90); /* Softer text color */
+  --accent: oklch(88.529% 0.14257 89.067); /* Vibrant Orange */
+  --accent-foreground: oklch(0.1 0.01 50);
   --destructive: oklch(0.6 0.2 25); /* A clear but not overly aggressive red */
-  --destructive-foreground: oklch(0.98 0.005 90);
+  --destructive-foreground: oklch(1 0 0);
   --border: oklch(0.92 0.01 90); /* Soft border color */
   --input: oklch(0.92 0.01 90);
-  --ring: oklch(84.765% 0.1458 91.402); /* Brand yellow for focus rings */
-  --chart-1: oklch(89.264% 0.14863 91.933);
-  --chart-2: oklch(84.765% 0.1458 91.402);
-  --chart-3: oklch(0.75 0.181 78.4);
-  --chart-4: oklch(0.65 0.153 78.5);
-  --chart-5: oklch(0.47 0.151 77.2);
+  --ring: oklch(0.85 0.19 92); /* Brand yellow for focus rings */
+  --chart-1: oklch(0.85 0.19 92);
+  --chart-2: oklch(0.75 0.18 50);
+  --chart-3: oklch(0.65 0.15 30);
+  --chart-4: oklch(0.8 0.18 45);
+  --chart-5: oklch(0.65 0.21 354);
   --sidebar: oklch(1 0 0);
-  --sidebar-foreground: oklch(0.25 0.02 90);
-  --sidebar-primary: rgb(255, 221, 84);
-  --sidebar-primary-foreground: oklch(0.25 0.02 90);
+  --sidebar-foreground: oklch(0.1 0.01 50);
+  --sidebar-primary: oklch(0.85 0.19 92);
+  --sidebar-primary-foreground: oklch(0.1 0.01 50);
   --sidebar-accent: oklch(0.96 0.01 90);
-  --sidebar-accent-foreground: oklch(0.35 0.02 90);
-  --sidebar-border: oklch(74.407% 0.00569 95.19);
-  --sidebar-ring: oklch(84.765% 0.1458 91.402);
+  --sidebar-accent-foreground: oklch(0.1 0.01 50);
+  --sidebar-border: oklch(78.275% 0.01157 89.74);
+  --sidebar-ring: oklch(0.85 0.19 92);
 }
 
 .dark .customer-theme {
-  --background: oklch(0.12 0.042 264.5);
-  /* black-pearl */
-  --foreground: oklch(0.86 0.008 12.0);
-  /* alto */
-  --card: oklch(0.18 0.028 260.0);
-  /* darker surface */
-  --card-foreground: oklch(0.86 0.008 12.0);
-  --popover: oklch(0.18 0.028 260.0);
-  --popover-foreground: oklch(0.86 0.008 12.0);
-  --primary: oklch(84.765% 0.1458 91.402);
-  /* ronchi */
-  --primary-foreground: oklch(0.12 0.042 264.5);
-  --secondary: oklch(0.75 0.181 78.4);
-  /* hokey-pokey */
-  --secondary-foreground: oklch(0.86 0.008 12.0);
-  --muted: oklch(83.895% 0.12147 92.462 / 0.203);
-  /* horses-neck */
-  --muted-foreground: oklch(0.85 0.112 86.9);
-  /* chenin */
-  --accent: oklch(52% 0.10566 91.787);
-  /* golden-dream */
-  --accent-foreground: oklch(0.12 0.042 264.5);
+  /* Updated color scheme for Winnerspin: yellow, orange, black */
+  --background: oklch(0 0 0);
+  --foreground: oklch(1.0 0 0);
+  --card: oklch(0.12 0.01 0);
+  --card-foreground: oklch(1.0 0 0);
+  --popover: oklch(0.12 0.01 0);
+  --popover-foreground: oklch(1.0 0 0);
+  --primary: oklch(0.85 0.19 92); /* Bright Yellow */
+  --primary-foreground: oklch(0 0 0);
+  --secondary: oklch(0.75 0.18 50); /* Vibrant Orange */
+  --secondary-foreground: oklch(0 0 0);
+  --muted: oklch(0.2 0.01 0);
+  --muted-foreground: oklch(0.7 0.01 0);
+  --accent: oklch(0.75 0.18 50); /* Vibrant Orange */
+  --accent-foreground: oklch(0 0 0);
   --destructive: oklch(0.6368 0.2078 25.3313);
-  --destructive-foreground: oklch(0.86 0.008 12.0);
-  --border: oklch(84.92% 0.11187 87.05 / 0.300);;
-  /* reef-gold */
-  --input: oklch(65.269% 0.13814 74.219 / 0.404);
-  --ring: oklch(73.176% 0.09657 93.08);
-  --chart-1: oklch(0.84 0.176 86.8);
-  --chart-2: oklch(0.75 0.181 78.4);
-  --chart-3: oklch(0.65 0.153 78.5);
-  --chart-4: oklch(0.47 0.151 77.2);
-  --chart-5: oklch(0.88 0.186 87.0);
-  --sidebar: oklch(0.12 0.042 264.5);
-  /* black-pearl */
-  --sidebar-foreground: oklch(0.86 0.008 12.0);
-  /* alto */
-  --sidebar-primary: oklch(89.264% 0.14863 91.933);
-  --sidebar-primary-foreground: oklch(0.12 0.042 264.5);
-  --sidebar-accent: oklch(0.85 0.112 86.9);
-  --sidebar-accent-foreground: oklch(0.12 0.042 264.5);
-  --sidebar-border:oklch(0.85 0.112 86.9);
-  --sidebar-ring: oklch(0.84 0.176 86.8);
+  --destructive-foreground: oklch(1.0 0 0);
+  --border: oklch(0.25 0.01 0);
+  --input: oklch(0.25 0.01 0);
+  --ring: oklch(0.85 0.19 92);
+  --chart-1: oklch(0.85 0.19 92);
+  --chart-2: oklch(0.75 0.18 50);
+  --chart-3: oklch(0.65 0.15 30);
+  --chart-4: oklch(0.8 0.18 45);
+  --chart-5: oklch(0.65 0.21 354);
+  --radius: 1rem;
+  --sidebar: oklch(0 0 0);
+  --sidebar-foreground: oklch(1.0 0 0);
+  --sidebar-primary: oklch(0.85 0.19 92);
+  --sidebar-primary-foreground: oklch(0 0 0);
+  --sidebar-accent: oklch(0.75 0.18 50);
+  --sidebar-accent-foreground: oklch(0 0 0);
+  --sidebar-border: oklch(64.009% 0.00007 271.152);
+  --sidebar-ring: oklch(0.85 0.19 92);
+  --font-sans: "Geist", "Geist Fallback";
+  --font-mono: "Geist Mono", "Geist Mono Fallback";
+  --font-serif: "Source Serif 4", "Source Serif 4 Fallback";
+  --shadow-x: 0px;
+  --shadow-y: 1px;
+  --shadow-blur: 2px;
+  --shadow-spread: 0px;
+  --shadow-opacity: 0.05;
+  --shadow-color: #000000;
 }
 
  @theme inline {

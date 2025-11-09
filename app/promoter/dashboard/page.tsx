@@ -1,9 +1,9 @@
 "use client"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { SeasonSwitcher } from "@/components/season-switcher"
+import { SeasonSwitcher } from "@/components/promoter/season-switcher"
 import { ThemeToggle } from "@/components/theme-toggle"
-import { StatsCards } from "@/components/stats-cards"
-import { NewPosterPopup } from "@/components/new-poster-popup"
+import { StatsCards } from "@/components/promoter/stats-cards"
+import { NewPosterPopup } from "@/components/promoter/new-poster-popup"
 import { useSelector } from "react-redux"
 import type { RootState } from "@/lib/store"
 

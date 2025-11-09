@@ -1,11 +1,12 @@
 import { createSlice, createAsyncThunk, type PayloadAction } from "@reduxjs/toolkit"
 
 interface Season {
-
   _id: string
   season: string
   amount: number
   duration: string
+  startDate: string
+  endDate: string
 }
 
 interface SeasonState {

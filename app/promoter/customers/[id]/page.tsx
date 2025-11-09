@@ -7,14 +7,14 @@ import {
   fetchCustomerDetails,
   clearSelectedCustomer,
   updateCustomerDetails,
-} from "@/lib/customer/customerSlice"
+} from "@/lib/user/customerSlice"
 import type { AppDispatch, RootState } from "@/lib/store"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { ArrowLeft, Edit, User, Mail, Phone, MapPin } from "lucide-react"
+import { ArrowLeft, Edit } from "lucide-react"
 
 export default function CustomerDetailPage() {
   const params = useParams()
@@ -78,6 +78,7 @@ export default function CustomerDetailPage() {
       router.push("/promoter/customers")
     } catch (err) {
       // Error is handled by the slice
+      console.error(err);
     }
   }
 

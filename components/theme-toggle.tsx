@@ -3,7 +3,6 @@
 import * as React from "react"
 import { useTheme } from "next-themes"
 import { Switch } from "@/components/ui/switch"
-import { Label } from "@/components/ui/label"
 import { Sun, Moon } from "lucide-react"
 
 export function ThemeToggle() {

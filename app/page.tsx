@@ -1,21 +1,32 @@
-"use client"
 
-import { useEffect } from "react"
-import { useRouter } from "next/navigation"
+import { Hero } from "@/components/landing/hero";
+import { WhyChoose } from "@/components/landing/why-choose";
+import { Testimonials } from "@/components/landing/testimonials";
+import { Founder } from "@/components/landing/founder";
+import { CTA } from "@/components/landing/cta";
+import { FAQ } from "@/components/landing/faq";
+import { FashionBrand } from "@/components/landing/fashion-brand";
+import { Footer } from "@/components/landing/footer";
+import MyJourneyPage from "@/components/landing/timeline";
+import NavBar from "@/components/landing/navbar";
+import { AboutUs } from "@/components/landing/aboutUs";
 
-export default function HomePage() {
-  const router = useRouter()
-
-  useEffect(() => {
-    router.push("/promoter/login")
-  }, [router])
-
+export default function Home() {
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="text-center">
-        <h1 className="text-2xl font-bold text-primary mb-2">Promoter Dashboard</h1>
-        <p className="text-muted-foreground">Redirecting to login...</p>
-      </div>
-    </div>
-  )
+    <main className="min-h-screen bg-black overflow-hidden">
+      <NavBar />
+      <Hero />
+      <AboutUs />
+      {/* <HowItWorks /> */}
+      <MyJourneyPage />
+      <WhyChoose />
+
+      <Testimonials />
+      <Founder />
+      <CTA />
+      <FAQ />
+      <FashionBrand />
+      <Footer />
+    </main>
+  );
 }

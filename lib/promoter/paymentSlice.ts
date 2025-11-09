@@ -29,13 +29,20 @@ export const addPaymentDetails = createAsyncThunk(
   "payment/addPaymentDetails",
   async (paymentDetails: Omit<PaymentDetails, "_id">, { getState, rejectWithValue }) => {
     const state = getState() as RootState
+    const token = state.auth.token
+    const seasonId = state.season.currentSeason?._id
+
+    if (!token || !seasonId) {
+      return rejectWithValue("Authentication token or season ID is missing.")
+    }
+
     try {
-      const response = await fetch(`/api/promoter/add-payment-details?seasonId=${state.season.currentSeason?._id}`, {
+      const response = await fetch(`/api/promoter/add-payment-details?seasonId=${seasonId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          token: state.auth.token!,
-          seasonid: state.season.currentSeason?._id,
+          token: token,
+          seasonid: seasonId,
         },
         body: JSON.stringify(paymentDetails),
       })
@@ -45,8 +52,9 @@ export const addPaymentDetails = createAsyncThunk(
       }
       // The backend doesn't return the details, so we optimistically update
       return paymentDetails as PaymentDetails
-    } catch (error: any) {
-      return rejectWithValue(error.message)
+    } catch (error) {
+      if(error instanceof Error) return rejectWithValue(error.message);
+      return rejectWithValue("An error occurred while adding payment details")
     }
   },
 )

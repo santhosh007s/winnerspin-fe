@@ -6,6 +6,8 @@ interface Installment {
   installmentNo: number
   amount: string
   paymentDate: string
+  isVerified: boolean
+  season: string
 }
 
 interface Due {
@@ -21,6 +23,7 @@ export interface RepaymentInfo {
   cardNo: string
   installments: Installment[]
   dues: Due[]
+  season: string
 }
 
 interface RepaymentState {
@@ -46,8 +49,8 @@ export const fetchRepayments = createAsyncThunk("repayment/fetchRepayments", asy
       return rejectWithValue(data.message || "Failed to fetch repayments")
     }
     return data.repayments
-  } catch (error: any) {
-    return rejectWithValue(error.message)
+  } catch (error) {
+    if(error instanceof Error) return rejectWithValue(error.message)
   }
 })
 
@@ -66,8 +69,9 @@ export const addRepayment = createAsyncThunk(
         return rejectWithValue(data.message || "Failed to add repayment")
       }
       return data
-    } catch (error: any) {
-      return rejectWithValue(error.message)
+    } catch (error) {
+      if(error instanceof Error) return rejectWithValue(error.message)
+      return rejectWithValue("An error occurred while adding repayment")
     }
   },
 )

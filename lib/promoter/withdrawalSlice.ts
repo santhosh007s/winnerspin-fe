@@ -1,11 +1,10 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit"
 
 interface Withdrawal {
-  id: string
-  amount: number
-  status: "Processing" | "Completed" | "Rejected"
-  date: string
-  requestedAt: string
+  _id: string
+  amount: string // Schema defines amount as String
+  status: "approved" | "rejected" | "pending"
+  createdAt: string
 }
 
 interface WithdrawalState {
@@ -43,7 +42,7 @@ export const fetchWithdrawals = createAsyncThunk(
 
 export const requestWithdrawal = createAsyncThunk(
   "withdrawal/requestWithdrawal",
-  async ({ amount, seasonId }: { amount: number; seasonId: string }, { rejectWithValue, getState }) => {
+  async ({ amount, seasonId }: { amount: number; seasonId: string }, { getState }) => {
     const state = getState() as { auth: { token: string } }
     const response = await fetch(`/api/promoter/request-withdrawal?seasonId=${seasonId}`, {
       method: "POST",

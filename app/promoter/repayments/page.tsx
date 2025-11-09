@@ -1,7 +1,7 @@
 "use client"
-import { RepaymentForm } from "@/components/repayment-form"
-import { RepaymentTable } from "@/components/repayment-table"
-import { RepaymentStats } from "@/components/repayment-stats"
+import { RepaymentForm } from "@/components/promoter/repayment-form"
+import { RepaymentTable } from "@/components/promoter/repayment-table"
+import { RepaymentStats } from "@/components/promoter/repayment-stats"
 
 export default function RepaymentsPage() {
   

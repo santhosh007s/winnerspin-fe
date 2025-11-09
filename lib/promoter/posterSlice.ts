@@ -38,8 +38,9 @@ export const fetchNewPoster = createAsyncThunk("poster/fetchNewPoster", async (_
       return rejectWithValue(data.message || "Failed to fetch new poster")
     }
     return data.newPoster
-  } catch (error: any) {
-    return rejectWithValue(error.message)
+  } catch (error) {
+    if(error instanceof Error) return rejectWithValue(error.message);
+    return rejectWithValue("An error occurred while fetching the new poster")
   }
 })
 

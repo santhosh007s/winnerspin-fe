@@ -13,6 +13,8 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { loginPromoter } from "@/lib/promoter/authSlice"
 import type { AppDispatch, RootState } from "@/lib/store"
 import { ThemeProvider } from "@/components/theme-provider"
+import Image from "next/image"
+import logo from "@/public/Logo-WS.png"
 
 export default function PromoterLogin() {
   const [username, setUsername] = useState("")
@@ -28,6 +30,7 @@ export default function PromoterLogin() {
       router.push("/promoter/dashboard")
     } catch (error) {
       // Error is handled by Redux
+      console.error(error);
     }
   }
 
@@ -35,6 +38,9 @@ export default function PromoterLogin() {
   <ThemeProvider>
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <Card className="w-full max-w-md">
+      <div className="w-full flex justify-center">
+        <Image src={logo} alt="Logo" height={72} className="mr-2" />
+      </div>
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-bold text-primary">Promoter Login</CardTitle>
           <CardDescription>Sign in to your promoter account</CardDescription>

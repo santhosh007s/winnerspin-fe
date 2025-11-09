@@ -15,6 +15,7 @@ import { fetchSeasons } from "@/lib/seasonSlice"
 export default function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false)
   const [editData, setEditData] = useState({
+    username: "",
     email: "",
     mobNo: "",
     address: "",
@@ -22,6 +23,8 @@ export default function ProfilePage() {
     state: "",
     pincode: "",
   })
+  const [formError, setFormError] = useState<string | null>(null)
+  const [isFetchingPincode, setIsFetchingPincode] = useState(false)
   const { currentSeason } = useSelector((state: RootState) => state.season)
   const dispatch = useDispatch<AppDispatch>()
 
@@ -33,11 +36,41 @@ export default function ProfilePage() {
     }
   }, [dispatch, currentSeason])
   
-  const { user, isLoading: authLoading, error: authError } = useSelector((state: RootState) => state.auth)
+  const { user, error: authError } = useSelector((state: RootState) => state.auth)
+
+  useEffect(() => {
+    const fetchPincodeData = async () => {
+      if (editData.pincode.length === 6) {
+        setIsFetchingPincode(true)
+        setFormError(null)
+        try {
+          const response = await fetch(`https://api.postalpincode.in/pincode/${editData.pincode}`)
+          const data = await response.json()
+          if (data && data[0].Status === "Success" && data[0].PostOffice.length > 0) {
+            const { District, State } = data[0].PostOffice[0]
+            setEditData((prev) => ({ ...prev, city: District, state: State }))
+          } else {
+            setFormError("Invalid pincode.")
+            setEditData((prev) => ({ ...prev, city: "", state: "" }))
+          }
+        } catch (err) {
+          console.error("Failed to fetch pincode data", err)
+          setFormError("Failed to fetch pincode data.")
+        } finally {
+          setIsFetchingPincode(false)
+        }
+      }
+    }
+    if (isEditing) {
+      fetchPincodeData()
+    }
+  }, [editData.pincode, isEditing])
 
   const handleEdit = () => {
     if (user) {
+      setFormError(null)
       setEditData({
+        username: user.username,
         email: user.email,
         mobNo: user.mobNo,
         address: user.address,
@@ -50,17 +83,33 @@ export default function ProfilePage() {
   }
 
   const handleSave = async () => {
+    setFormError(null)
+    if (!/^\d{10}$/.test(editData.mobNo)) {
+      setFormError("Mobile number must be 10 digits.")
+      return
+    }
+    if (!/^\d{6}$/.test(editData.pincode)) {
+      setFormError("Pincode must be 6 digits.")
+      return
+    }
+    if (!editData.state || !editData.city) {
+      setFormError("City and State are required. Please enter a valid pincode.")
+      return
+    }
     try {
       await dispatch(updatePromoterProfile(editData)).unwrap()
       setIsEditing(false)
     } catch (err) {
-      // Error is handled by the slice and displayed in the form
+      // Error is handled by the slice and displayed in the form4
+      console.error("Error updating profile:", err)
+      setFormError("Error updating profile. Please try again.")
     }
   }
 
   const handleCancel = () => {
     setIsEditing(false)
     setEditData({
+      username: "",
       email: "",
       mobNo: "",
       address: "",
@@ -68,6 +117,7 @@ export default function ProfilePage() {
       state: "",
       pincode: "",
     })
+    setFormError(null)
   }
 
   const handleLogout = () => {
@@ -114,6 +164,13 @@ export default function ProfilePage() {
         </div>
       </div>
 
+      {(authError || formError) && (
+        <Alert variant="destructive">
+          <AlertTitle>Error</AlertTitle>
+          <AlertDescription>{authError || formError}</AlertDescription>
+        </Alert>
+      )}
+
       {/* Account Status */}
       <Card>
         <CardHeader>
@@ -125,8 +182,13 @@ export default function ProfilePage() {
         <CardContent>
           <div className="grid gap-4 md:grid-cols-3">
             <div>
-              <Label>Username</Label>
-              <p className="text-lg font-semibold">{user.username}</p>
+              <Label htmlFor="username">Username</Label>
+              <Input
+                id="username"
+                value={isEditing ? editData.username : user.username}
+                readOnly
+                className="text-lg font-semibold border-none p-0 h-auto bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
+              />
             </div>
             <div>
               <Label>User ID</Label>
@@ -206,33 +268,7 @@ export default function ProfilePage() {
             )}
           </div>
 
-          <div className="grid gap-4 md:grid-cols-3">
-            <div className="space-y-2">
-              <Label htmlFor="city">City</Label>
-              {isEditing ? (
-                <Input
-                  id="city"
-                  value={editData.city}
-                  onChange={(e) => setEditData({ ...editData, city: e.target.value })}
-                />
-              ) : (
-                <p className="text-lg pt-2">{user.city || "-"}</p>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="state">State</Label>
-              {isEditing ? (
-                <Input
-                  id="state"
-                  value={editData.state}
-                  onChange={(e) => setEditData({ ...editData, state: e.target.value })}
-                />
-              ) : (
-                <p className="text-lg pt-2">{user.state || "-"}</p>
-              )}
-            </div>
-
+          <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="pincode">Pincode</Label>
               {isEditing ? (
@@ -240,10 +276,37 @@ export default function ProfilePage() {
                   id="pincode"
                   value={editData.pincode}
                   onChange={(e) => setEditData({ ...editData, pincode: e.target.value })}
+                  maxLength={6}
+                  placeholder="Enter 6-digit pincode"
                 />
               ) : (
                 <p className="text-lg pt-2">{user.pincode || "-"}</p>
               )}
+              {isEditing && isFetchingPincode && <p className="text-xs text-muted-foreground">Fetching details...</p>}
+            </div>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="space-y-2">
+              <Label htmlFor="city">City</Label>
+              <Input
+                id="city"
+                value={editData.city}
+                onChange={(e) => setEditData({ ...editData, city: e.target.value })}
+                readOnly={isEditing}
+                className={isEditing ? "bg-muted" : ""}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="state">State</Label>
+              <Input
+                id="state"
+                value={editData.state}
+                onChange={(e) => setEditData({ ...editData, state: e.target.value })}
+                readOnly={isEditing}
+                className={isEditing ? "bg-muted" : ""}
+              />
             </div>
           </div>
         </CardContent>
@@ -286,12 +349,6 @@ export default function ProfilePage() {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {authError && (
-              <Alert variant="destructive">
-                <AlertTitle>Update Failed</AlertTitle>
-                <AlertDescription>{authError}</AlertDescription>
-              </Alert>
-            )}
             {user.status !== "approved" && !isEditing && (
               <Alert>
                 <AlertDescription>

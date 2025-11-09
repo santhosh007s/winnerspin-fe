@@ -1,4 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit"
+import { RootState } from "../store"
 
 interface Transaction {
   _id: string
@@ -21,13 +22,16 @@ const initialState: WalletState = {
   error: null,
 }
 
-export const fetchEarnings = createAsyncThunk("wallet/fetchEarnings", async (_, { getState }) => {
-  const state = getState() as { auth: { token: string } }
+export const fetchEarnings = createAsyncThunk("wallet/fetchEarnings", async (_, { getState, rejectWithValue }) => {
+  const state = getState() as RootState
   const seasonId = state.season.currentSeason?._id
+  const token = state.auth.token
+  if (!seasonId || !token) {
+    return rejectWithValue("Missing season or token")
+  }
   const response = await fetch(`/api/promoter/all-earnings?seasonId=${seasonId}`, {
     headers: {
-      token: state.auth.token,
-      seasonid: seasonId,
+      token: token,
     },
   })
 
@@ -36,7 +40,7 @@ export const fetchEarnings = createAsyncThunk("wallet/fetchEarnings", async (_, 
   }
 
   const data = await response.json()
-  return data // Return the whole object { earnings, transactions }
+  return data as { earnings: number; transactions: Transaction[] }
 })
 
 const walletSlice = createSlice({

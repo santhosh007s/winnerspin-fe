@@ -6,8 +6,8 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Wallet, CreditCard, TrendingUp } from "lucide-react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
-import { PaymentDetailsForm } from "@/components/payment-details-form"
-import { WithdrawalRequestForm } from "@/components/withdrawal-request-form"
+import { PaymentDetailsForm } from "@/components/promoter/payment-details-form"
+import { WithdrawalRequestForm } from "@/components/promoter/withdrawal-request-form"
 import { fetchEarnings } from "@/lib/promoter/walletSlice"
 import { fetchWithdrawals } from "@/lib/promoter/withdrawalSlice"
 import { fetchSeasons } from "@/lib/seasonSlice"
@@ -24,17 +24,20 @@ export default function WalletPage() {
   const hasPendingWithdrawal = withdrawals.some((w) => w.status === "pending")
 
   useEffect(() => {
-    if (!user) {
-      dispatch(fetchPromoterProfile(currentSeason?._id))
-    }
+    // First, ensure we have season data. If not, fetch it and wait.
     if (!currentSeason) {
       dispatch(fetchSeasons())
+      return
     }
 
-    if (user?.status === "approved") {
-      if (currentSeason?._id) {
-        dispatch(fetchEarnings())
-      }
+    // Once we have a season, fetch the promoter profile if we don't have it.
+    if (!user && currentSeason?._id) {
+      dispatch(fetchPromoterProfile(currentSeason._id))
+    }
+
+    // Once the user is approved and we have a season, fetch wallet data.
+    if (user?.status === "approved" && currentSeason?._id) {
+      dispatch(fetchEarnings())
       dispatch(fetchWithdrawals())
     }
   }, [dispatch, user, currentSeason])
@@ -215,12 +218,12 @@ export default function WalletPage() {
                     <TableHead>Amount</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead>Requested Date</TableHead>
-                    <TableHead>Processed Date</TableHead>
+                    {/* <TableHead>Processed Date</TableHead> */}
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {withdrawals.map((withdrawal) => (
-                    <TableRow key={withdrawal.id}>
+                    <TableRow key={withdrawal._id}>
                       <TableCell className="font-semibold text-primary">
                         ₹{withdrawal.amount.toLocaleString()}
                       </TableCell>
@@ -228,7 +231,7 @@ export default function WalletPage() {
                         <Badge variant={withdrawal.status === 'approved' ? 'default' : withdrawal.status === 'rejected' ? 'destructive' : 'secondary'}>{withdrawal.status}</Badge>
                       </TableCell>
                       <TableCell>{new Date(withdrawal.createdAt).toLocaleDateString()}</TableCell>
-                      <TableCell>{withdrawal.processedAt ? new Date(withdrawal.processedAt).toLocaleDateString() : "-"}</TableCell>
+                      {/* <TableCell>{withdrawal.processedAt ? new Date(withdrawal.processedAt).toLocaleDateString() : "-"}</TableCell> */}
                     </TableRow>
                   ))}
                 </TableBody>

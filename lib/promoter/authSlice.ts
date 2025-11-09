@@ -1,4 +1,15 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit"
+import { RootState } from "../store"
+
+interface PaymentDetails {
+  _id: string
+  accNo: string
+  accHolderName: string
+  bankName: string
+  ifscCode: string
+  branch: string
+  upiId?: string
+}
 
 interface User {
   _id: string
@@ -14,6 +25,7 @@ interface User {
   balance: number
   customers: string[]
   createdBy: string
+  payment?: PaymentDetails
 }
 
 interface AuthState {
@@ -91,8 +103,9 @@ export const updatePromoterProfile = createAsyncThunk(
         return rejectWithValue(data.message || "Failed to update profile")
       }
       return data.promoter
-    } catch (error: any) {
-      return rejectWithValue(error.message)
+    } catch (error) {
+      if(error instanceof Error) return rejectWithValue(error.message);
+      return rejectWithValue("An error occurred while updating profile")
     }
   },
 )

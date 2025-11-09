@@ -6,7 +6,7 @@ import "./globals.css"
 import { ReduxProvider } from "@/components/redux-provider"
 
 export const metadata: Metadata = {
-  title: "Promoter Dashboard",
+  title: "Winnerspin",
   description: "MLM Promoter Management System",
   generator: "v0.app",
 }
