@@ -102,7 +102,7 @@ export default function CustomerProfilePage() {
 
     return { currentMonth, totalMonths, progress: Math.min(100, progress) }
   }
-  console.log(user.status)
+  // console.log(user.status)
   return (
     <div className="space-y-6">
       {/* Header */}

@@ -10,20 +10,20 @@ export function StatsCards() {
   const { currentSeason } = useSelector((state: RootState) => state.season)
   const isApproved = user?.status === "approved"
 
-  const seasonRepayments = currentSeason
-    ? repayments.filter((repayment) => repayment.season === currentSeason._id)
-    : repayments
+  // Correctly calculate total repayments from the nested structure
+  const totalRepayments = repayments.reduce((count, customer) => count + customer.installments.length, 0)
+  const totalCustomersWithRepayments = repayments.length
 
   const stats = [
     {
       title: "Total Customers",
-      value: user?.customers?.length || 0,
+      value: totalCustomersWithRepayments,
       icon: Users,
-      description: "Active customers",
+      description: "Customers with repayments",
     },
     {
       title: "Repayments",
-      value: seasonRepayments.length,
+      value: totalRepayments,
       icon: CreditCard,
       description: currentSeason ? `In ${currentSeason.season}` : "All seasons",
     },

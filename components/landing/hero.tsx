@@ -41,9 +41,11 @@ export function Hero() {
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
+          <a href="https://wa.me/9686915509">
           <button className="px-8 py-4 bg-gradient-to-r from-yellow-400 to-orange-600 text-black font-bold text-lg rounded-lg hover:shadow-2xl hover:shadow-yellow-400/50 transition transform hover:scale-105">
             Join Now
           </button>
+          </a>
           <div className="relative" ref={dropdownRef}>
             <button
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}

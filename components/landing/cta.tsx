@@ -19,10 +19,12 @@ export function CTA() {
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
+          <a href="https://wa.me/9686915509">
           <button className="group px-8 py-4 bg-gradient-to-r from-yellow-400 to-orange-600 text-black font-bold text-lg rounded-lg hover:shadow-2xl hover:shadow-yellow-400/50 transition transform hover:scale-105 flex items-center justify-center gap-2">
             Join Now
             <ArrowRight size={20} className="group-hover:translate-x-1 transition" />
           </button>
+          </a>
           {/* <button className="px-8 py-4 border-2 border-yellow-400 text-yellow-400 font-bold text-lg rounded-lg hover:bg-yellow-400/10 transition">
             Learn More
           </button> */}

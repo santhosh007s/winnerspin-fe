@@ -53,12 +53,12 @@ export function Footer() {
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-yellow-400 transition flex gap-1">
+                <a href="https://wa.me/9686915509" target="_blank" className="hover:text-yellow-400 transition flex gap-1">
                   <MessageCircleMore className="h-4 mt-px" />Whatsapp
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-yellow-400 transition flex gap-1">
+                <a href="tel:+919686445509" className="hover:text-yellow-400 transition flex gap-1">
                   <Phone className="h-4 mt-px" />Phone
                 </a>
               </li>

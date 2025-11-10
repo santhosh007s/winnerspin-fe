@@ -86,8 +86,8 @@ export function RepaymentForm() {
   }
 
   const handleInputChange = (field: string, value: string) => {
-    console.log("handleInputChange", field, value)
-    console.log("formData", formData)
+    // console.log("handleInputChange", field, value)
+    // console.log("formData", formData)
     setFormData((prev) => ({ ...prev, [field]: value }))
   }
 

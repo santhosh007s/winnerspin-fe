@@ -1,4 +1,5 @@
 "use client"
+import { differenceInMonths } from "date-fns"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { SeasonSwitcher } from "@/components/promoter/season-switcher"
 import { ThemeToggle } from "@/components/theme-toggle"
@@ -10,6 +11,18 @@ import type { RootState } from "@/lib/store"
 export default function PromoterDashboard() {
   const { user } = useSelector((state: RootState) => state.auth)
   const { currentSeason } = useSelector((state: RootState) => state.season)
+
+  const getSeasonDuration = () => {
+    if (!currentSeason) return ""
+
+    const start = new Date(currentSeason.startDate)
+    const end = new Date(currentSeason.endDate)
+
+    // Calculate the difference in months and add 1 to make it inclusive
+    const durationInMonths = differenceInMonths(end, start) + 1
+
+    return `${durationInMonths} Month${durationInMonths > 1 ? "s" : ""}`
+  }
 
   return (
     <div className="space-y-6">
@@ -45,8 +58,10 @@ export default function PromoterDashboard() {
                 <p className="text-lg font-semibold text-primary">₹{currentSeason.amount.toLocaleString()}</p>
               </div>
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Duration</p>
-                <p className="text-lg font-semibold text-primary">{currentSeason.duration}</p>
+                <p className="text-sm font-medium text-muted-foreground">
+                  Duration
+                </p>
+                <p className="text-lg font-semibold text-primary">{getSeasonDuration()}</p>
               </div>
             </div>
           </CardContent>

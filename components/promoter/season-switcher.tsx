@@ -16,8 +16,8 @@ export function SeasonSwitcher() {
   }, [currentSeason, dispatch])
 
   useEffect(() => {
-    console.log("currentSeason", currentSeason);
-    console.log("All seasons ----", seasons);
+    // console.log("currentSeason", currentSeason);
+    // console.log("All seasons ----", seasons);
   }, [currentSeason, seasons])
 
   const handleSeasonChange = (seasonId: string) => {

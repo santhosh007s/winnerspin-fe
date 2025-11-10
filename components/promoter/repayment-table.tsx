@@ -19,7 +19,6 @@ export function RepaymentTable() {
   const {customers} = useSelector((state: RootState) => state.customer)
   const { repayments, isLoading, error } = useSelector((state: RootState) => state.repayment)
   const { currentSeason } = useSelector((state: RootState) => state.season)
-  const { user: promoter } = useSelector((state: RootState) => state.auth)
   
   useEffect(() => {
     if (currentSeason && !customers.length) dispatch(fetchCustomers(currentSeason._id))
@@ -57,7 +56,7 @@ export function RepaymentTable() {
     if (!repayments.length || !currentSeason) return
 
     const tableHeaders = ["Customer Name", "Card Number", ...monthHeaders.map((month) => format(month, "MMM yyyy"))]
-    const tableData: any[][] = [tableHeaders]
+    const tableData = [tableHeaders]
 
     repayments.forEach((customer) => {
       const paidInstallmentNumbers = customer.installments

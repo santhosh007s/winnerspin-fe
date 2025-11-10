@@ -114,7 +114,7 @@ const faqs = [
         <div className="mt-12 p-8 bg-gradient-to-r from-yellow-500/10 to-orange-500/10 border border-yellow-500/30 rounded-lg text-center">
           <p className="text-white mb-4">Still have questions? We&apos;re here to help!</p>
           <a
-            href="mailto:info@winnerspin.in"
+            href="https://wa.me/9686915509"
             className="inline-block px-8 py-3 bg-yellow-500 hover:bg-yellow-600 text-black font-bold rounded-lg transition-all duration-300 transform hover:scale-105"
           >
             Contact Us

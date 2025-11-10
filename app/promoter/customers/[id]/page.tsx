@@ -26,11 +26,11 @@ export default function CustomerDetailPage() {
 
   const { selectedCustomer, isLoading, error } = useSelector((state: RootState) => state.customer)
 
-  useEffect(() => {
-    console.log("selectedCustomer", selectedCustomer);
-    console.log("isLoading", isLoading);
-    console.log("error", error);
-  }, [selectedCustomer, isLoading, error])
+  // useEffect(() => {
+  //   console.log("selectedCustomer", selectedCustomer);
+  //   console.log("isLoading", isLoading);
+  //   console.log("error", error);
+  // }, [selectedCustomer, isLoading, error])
   
   const [formData, setFormData] = useState({
     username: "",

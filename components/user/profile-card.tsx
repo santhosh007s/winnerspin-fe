@@ -39,7 +39,7 @@ export function ProfileCard({ profile }: ProfileCardProps) {
 
   const handleSave = () => {
     // In a real app, this would dispatch an update action
-    console.log("Saving profile:", formData)
+    // console.log("Saving profile:", formData)
     setIsEditing(false)
   }
 

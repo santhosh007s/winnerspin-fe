@@ -289,24 +289,30 @@ export default function ProfilePage() {
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="city">City</Label>
-              <Input
-                id="city"
-                value={editData.city}
-                onChange={(e) => setEditData({ ...editData, city: e.target.value })}
-                readOnly={isEditing}
-                className={isEditing ? "bg-muted" : ""}
-              />
+              {isEditing ? (
+                <Input
+                  id="city"
+                  value={editData.city}
+                  readOnly
+                  className="bg-muted"
+                />
+              ) : (
+                <p className="text-lg pt-2">{user.city || "-"}</p>
+              )}
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="state">State</Label>
-              <Input
-                id="state"
-                value={editData.state}
-                onChange={(e) => setEditData({ ...editData, state: e.target.value })}
-                readOnly={isEditing}
-                className={isEditing ? "bg-muted" : ""}
-              />
+              {isEditing ? (
+                <Input
+                  id="state"
+                  value={editData.state}
+                  readOnly
+                  className="bg-muted"
+                />
+              ) : (
+                <p className="text-lg pt-2">{user.state || "-"}</p>
+              )}
             </div>
           </div>
         </CardContent>
