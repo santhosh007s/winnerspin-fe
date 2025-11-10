@@ -3,10 +3,9 @@ import { useEffect } from "react"
 import { format } from "date-fns"
 import { useDispatch, useSelector } from "react-redux"
 import Link from "next/link"
-import jsPDF from "jspdf"
-import autoTable, { Color } from "jspdf-autotable"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import * as XLSX from "xlsx"
 import { Button } from "@/components/ui/button"
 import { Eye, Download } from "lucide-react"
 import { fetchCustomers } from "@/lib/user/customerSlice"
@@ -27,53 +26,33 @@ export function CustomerTable() {
     }
   }, [dispatch, currentSeason])
 
-  const handleDownloadPdf = () => {
+  const handleDownloadExcel = () => {
     if (!customers.length) return
 
-    const primaryColor = [10, 163, 163] as Color // Teal
-
-    const doc = new jsPDF()
-    const tableColumns = ["Name","Card No", "Mobile", "Email",  "City", "Joined Date"]
-    const tableRows: (string | number)[][] = []
+    const tableHeaders = ["Name", "Card No", "Mobile", "Email", "City", "Joined Date"]
+    const tableData: (string | number)[][] = [tableHeaders]
 
     customers.forEach((customer) => {
-      const customerData = [
+      tableData.push([
         customer.username,
         customer.cardNo,
         customer.mobile,
         customer.email,
         customer.city,
         format(new Date(customer.createdAt), "dd/MM/yyyy"),
-      ]
-      tableRows.push(customerData)
+      ])
     })
 
-    doc.setFontSize(18)
-    doc.text(`Customer List - ${currentSeason?.season || "All Seasons"}`, 14, 22)
+    const wb = XLSX.utils.book_new()
+    const ws = XLSX.utils.aoa_to_sheet(tableData)
 
-    doc.setFontSize(11)
-    doc.setTextColor(100)
-    const pageWidth = doc.internal.pageSize.getWidth()
-    doc.text(`Generated on: ${format(new Date(), "PPP")}`, pageWidth - 14, 22, { align: 'right' })
+    // Set column widths for better readability
+    ws["!cols"] = [{ wch: 25 }, { wch: 15 }, { wch: 15 }, { wch: 25 }, { wch: 20 }, { wch: 15 }]
 
-    let startY = 30
-    if (promoter) {
-      doc.text(`Promoter: ${promoter.username} (ID: ${promoter.userid})`, 14, startY)
-      startY += 7
-    }
+    XLSX.utils.book_append_sheet(wb, ws, "Customers")
 
-    autoTable(doc, {
-      startY: startY + 5,
-      head: [tableColumns],
-      body: tableRows,
-      theme: "striped",
-      headStyles: { fillColor: primaryColor },
-      didDrawPage: (data) => {
-        doc.text(`Page ${data.pageNumber}`, data.settings.margin.left, doc.internal.pageSize.height - 10)
-      },
-    })
-
-    doc.save(`customers_${currentSeason?.season || "all"}_${new Date().toISOString().split("T")[0]}.pdf`)
+    const fileName = `customers_${currentSeason?.season || "all"}_${new Date().toISOString().split("T")[0]}.xlsx`
+    XLSX.writeFile(wb, fileName)
   }
 
   if (isLoading) {
@@ -101,8 +80,8 @@ export function CustomerTable() {
           <CardTitle>All Customers</CardTitle>
         <CardDescription>Manage your customer database</CardDescription>
         </div>
-        <Button onClick={handleDownloadPdf} variant="outline" size="sm" className="gap-2" disabled={customers.length === 0}>
-          <Download className="h-4 w-4" /> Download PDF
+        <Button onClick={handleDownloadExcel} variant="outline" size="sm" className="gap-2" disabled={customers.length === 0}>
+          <Download className="h-4 w-4" /> Download Excel
         </Button>
       </CardHeader>
       <CardContent>

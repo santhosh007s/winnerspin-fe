@@ -1,10 +1,9 @@
 "use client"
 import { useEffect } from "react"
 import { format } from "date-fns"
-import jsPDF from "jspdf"
-import autoTable, { Color } from "jspdf-autotable"
 import { useDispatch, useSelector } from "react-redux"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import * as XLSX from "xlsx"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { fetchRepayments } from "@/lib/promoter/repaymentSlice"
@@ -54,54 +53,44 @@ export function RepaymentTable() {
 
   const monthHeaders = getMonthHeaders()
 
-  const handleDownloadPdf = () => {
+  const handleDownloadExcel = () => {
     if (!repayments.length || !currentSeason) return
 
-    const primaryColor = [10, 163, 163] // Teal
-
-    const doc = new jsPDF({ orientation: "landscape" })
-    const tableColumns = ["Customer", ...monthHeaders.map((month) => format(month, "MMM yyyy"))]
-    const tableRows: string[][] = []
+    const tableHeaders = ["Customer Name", "Card Number", ...monthHeaders.map((month) => format(month, "MMM yyyy"))]
+    const tableData: any[][] = [tableHeaders]
 
     repayments.forEach((customer) => {
-      const paidInstallmentNumbers = customer.installments.map((inst) => inst.installmentNo)
+      const paidInstallmentNumbers = customer.installments
+        .filter((inst) => inst.isVerified)
+        .map((inst) => inst.installmentNo)
+      const pendingInstallmentNumbers = customer.installments
+        .filter((inst) => !inst.isVerified)
+        .map((inst) => inst.installmentNo)
       const dueInstallments = customer.dues.map((due) => due.installmentNo)
 
-      const row = [`${customer.customerName} (${customer.cardNo})`]
-      monthHeaders.forEach((_, index) => {
+      const row = [customer.customerName, customer.cardNo]
+      monthHeaders.forEach((_month, index) => {
         const installmentNo = index + 1
-        const isPaid = paidInstallmentNumbers.includes(installmentNo)
+        const isPaid = paidInstallmentNumbers.includes(installmentNo) || pendingInstallmentNumbers.includes(installmentNo)
         const isDue = dueInstallments.includes(installmentNo)
         row.push(isPaid ? "Paid" : isDue ? "Due" : "-")
       })
-      tableRows.push(row)
+      tableData.push(row)
     })
 
-    doc.setFontSize(18)
-    doc.text(`Installment Report - ${currentSeason.season}`, 14, 22)
-    doc.setFontSize(11)
-    doc.setTextColor(100)
-    const pageWidth = doc.internal.pageSize.getWidth()
-    doc.text(`Generated on: ${format(new Date(), "PPP")}`, pageWidth - 14, 22, { align: 'right' })
+    // Create a new workbook and a worksheet
+    const wb = XLSX.utils.book_new()
+    const ws = XLSX.utils.aoa_to_sheet(tableData)
 
-    let startY = 30
-    if (promoter) {
-      doc.text(`Promoter: ${promoter.username} (ID: ${promoter.userid})`, 14, startY)
-      startY += 7
-    }
+    // Set column widths
+    const columnWidths = [{ wch: 25 }, { wch: 15 }, ...monthHeaders.map(() => ({ wch: 15 }))]
+    ws["!cols"] = columnWidths
 
-    autoTable(doc, {
-      startY: startY + 5,
-      head: [tableColumns],
-      body: tableRows,
-      theme: "striped",
-      headStyles: { fillColor: primaryColor  as Color },
-      didDrawPage: (data) => {
-        doc.text(`Page ${data.pageNumber}`, data.settings.margin.left, doc.internal.pageSize.height - 10)
-      },
-    })
+    // Add the worksheet to the workbook
+    XLSX.utils.book_append_sheet(wb, ws, `Installment Report`)
 
-    doc.save(`repayment_status_${currentSeason.season}_${new Date().toISOString().split("T")[0]}.pdf`)
+    // Generate and download the Excel file
+    XLSX.writeFile(wb, `repayment_status_${currentSeason.season}_${new Date().toISOString().split("T")[0]}.xlsx`)
   }
 
   if (isLoadingInitial) {
@@ -131,8 +120,8 @@ export function RepaymentTable() {
             An overview of all customer dues and payments for the current season.
           </CardDescription>
         </div>
-        <Button onClick={handleDownloadPdf} variant="outline" size="sm" className="gap-2" disabled={repayments.length === 0}>
-          <Download className="h-4 w-4" /> Download PDF
+        <Button onClick={handleDownloadExcel} variant="outline" size="sm" className="gap-2" disabled={repayments.length === 0}>
+          <Download className="h-4 w-4" /> Download Excel
         </Button>
       </CardHeader>
       <CardContent>

@@ -1,6 +1,6 @@
 "use client"
 import { CustomerForm } from "@/components/user/customer-form"
-import { CustomerTable } from "@/components/user/customer-table"
+import { CustomerTable } from "@/components/promoter/customer-table"
 
 export default function CustomersPage() {
   return (

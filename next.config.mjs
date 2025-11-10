@@ -15,7 +15,7 @@ const nextConfig = {
     return [
       {
         source: "/api/:path*",
-        destination: "http://65.1.111.185//:path*", // Proxy to Backend
+        destination: "https://api.winnerspin.in.net//:path*", // Proxy to Backend
       },
     ];
   },
