@@ -1,5 +1,6 @@
 "use client"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
+import { useSearchParams } from "next/navigation"
 import { useDispatch, useSelector } from "react-redux"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
@@ -16,12 +17,21 @@ import type { AppDispatch, RootState } from "@/lib/store"
 
 export default function WalletPage() {
   const dispatch = useDispatch<AppDispatch>()
+  const searchParams = useSearchParams()
+  const [isWithdrawalFormOpen, setIsWithdrawalFormOpen] = useState(false)
+
   const { user } = useSelector((state: RootState) => state.auth)
   const { earnings, transactions, isLoading } = useSelector((state: RootState) => state.wallet)
   const { details: paymentDetails } = useSelector((state: RootState) => state.payment)
   const { withdrawals, isLoading: isWithdrawalsLoading } = useSelector((state: RootState) => state.withdrawal)
   const { currentSeason } = useSelector((state: RootState) => state.season)
   const hasPendingWithdrawal = withdrawals.some((w) => w.status === "pending")
+
+  useEffect(() => {
+    if (searchParams.get("action") === "withdraw") {
+      setIsWithdrawalFormOpen(true)
+    }
+  }, [searchParams])
 
   useEffect(() => {
     // First, ensure we have season data. If not, fetch it and wait.
@@ -69,7 +79,11 @@ export default function WalletPage() {
         </div>
         <div className="flex gap-2">
           <PaymentDetailsForm />
-          <WithdrawalRequestForm hasPendingWithdrawal={hasPendingWithdrawal} />
+          <WithdrawalRequestForm
+            hasPendingWithdrawal={hasPendingWithdrawal}
+            open={isWithdrawalFormOpen}
+            onOpenChange={setIsWithdrawalFormOpen}
+          />
         </div>
       </div>
 

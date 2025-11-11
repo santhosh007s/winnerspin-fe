@@ -24,8 +24,12 @@ import { fetchCustomers } from "@/lib/user/customerSlice"
 import type { AppDispatch, RootState } from "@/lib/store"
 import { cn } from "@/lib/utils"
 
-export function RepaymentForm() {
-  const [open, setOpen] = useState(false)
+interface RepaymentFormProps {
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
+}
+
+export function RepaymentForm({ open, onOpenChange }: RepaymentFormProps) {
   const [formData, setFormData] = useState({
     amount: "",
     cardNo: "",
@@ -40,8 +44,8 @@ export function RepaymentForm() {
   const { isLoading, error } = useSelector((state: RootState) => state.repayment)
 
   useEffect(() => {
-    if (open) {
-      if ((!customers.length || !currentSeason) && currentSeason?._id) {
+    if (open && currentSeason?._id) {
+      if (!customers.length) {
         dispatch(fetchCustomers(currentSeason._id))
       }
     }
@@ -75,7 +79,7 @@ export function RepaymentForm() {
         customerId: "",
         paymentDate: "",
       })
-      setOpen(false)
+      onOpenChange?.(false)
 
       // Refresh repayments list
       if (currentSeason) dispatch(fetchRepayments(currentSeason._id))
@@ -94,7 +98,7 @@ export function RepaymentForm() {
   const selectedCustomer = customers.find((c) => c._id === formData.customerId)
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>
         <Button className="gap-2">
           <Plus className="h-4 w-4" />
@@ -165,7 +169,7 @@ export function RepaymentForm() {
             <Button type="submit" disabled={isLoading}>
               {isLoading ? "Adding..." : "Add Repayment"}
             </Button>
-            <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+            <Button type="button" variant="outline" onClick={() => onOpenChange?.(false)}>
               Cancel
             </Button>
           </div>

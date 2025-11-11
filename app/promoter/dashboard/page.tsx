@@ -1,5 +1,6 @@
 "use client"
 import { differenceInMonths } from "date-fns"
+import Link from "next/link"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { SeasonSwitcher } from "@/components/promoter/season-switcher"
 import { ThemeToggle } from "@/components/theme-toggle"
@@ -79,19 +80,25 @@ export default function PromoterDashboard() {
         </CardHeader>
         <CardContent>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            <div className="p-4 border border-border rounded-lg hover:bg-muted/50 transition-colors cursor-pointer">
-              <h3 className="font-medium text-primary mb-2">Add New Customer</h3>
-              <p className="text-sm text-muted-foreground">Register a new customer for the current season</p>
-            </div>
-            <div className="p-4 border border-border rounded-lg hover:bg-muted/50 transition-colors cursor-pointer">
-              <h3 className="font-medium text-primary mb-2">Record Repayment</h3>
-              <p className="text-sm text-muted-foreground">Add a repayment for existing customers</p>
-            </div>
-            {user?.status === "approved" && (
-              <div className="p-4 border border-border rounded-lg hover:bg-muted/50 transition-colors cursor-pointer">
-                <h3 className="font-medium text-primary mb-2">Request Withdrawal</h3>
-                <p className="text-sm text-muted-foreground">Withdraw your available earnings</p>
+            <Link href="/promoter/customers?action=add">
+              <div className="p-4 border border-border rounded-lg hover:bg-muted/50 transition-colors cursor-pointer h-full">
+                <h3 className="font-medium text-primary mb-2">Add New Customer</h3>
+                <p className="text-sm text-muted-foreground">Register a new customer for the current season</p>
               </div>
+            </Link>
+            <Link href="/promoter/repayments?action=add">
+              <div className="p-4 border border-border rounded-lg hover:bg-muted/50 transition-colors cursor-pointer h-full">
+                <h3 className="font-medium text-primary mb-2">Record Repayment</h3>
+                <p className="text-sm text-muted-foreground">Add a repayment for existing customers</p>
+              </div>
+            </Link>
+            {user?.status === "approved" && (
+              <Link href="/promoter/wallet?action=withdraw">
+                <div className="p-4 border border-border rounded-lg hover:bg-muted/50 transition-colors cursor-pointer h-full">
+                  <h3 className="font-medium text-primary mb-2">Request Withdrawal</h3>
+                  <p className="text-sm text-muted-foreground">Withdraw your available earnings</p>
+                </div>
+              </Link>
             )}
           </div>
         </CardContent>

@@ -1,9 +1,20 @@
 "use client"
+import { useEffect, useState } from "react"
+import { useSearchParams } from "next/navigation"
 import { RepaymentForm } from "@/components/promoter/repayment-form"
 import { RepaymentTable } from "@/components/promoter/repayment-table"
 import { RepaymentStats } from "@/components/promoter/repayment-stats"
 
 export default function RepaymentsPage() {
+    const searchParams = useSearchParams()
+  const [isFormOpen, setIsFormOpen] = useState(false)
+
+  useEffect(() => {
+    if (searchParams.get("action") === "add") {
+      setIsFormOpen(true)
+    }
+  }, [searchParams])
+
   
   return (
     <div className="space-y-6">
@@ -12,7 +23,7 @@ export default function RepaymentsPage() {
           <h1 className="text-3xl font-bold text-primary">Repayments</h1>
           <p className="text-muted-foreground">Track and manage customer repayments</p>
         </div>
-        <RepaymentForm />
+        <RepaymentForm open={isFormOpen} onOpenChange={setIsFormOpen} />
       </div>
 
       <RepaymentStats />

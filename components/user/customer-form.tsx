@@ -31,8 +31,11 @@ const getInitialFormData = (seasonAmount?: number) => ({
   firstPayment: seasonAmount?.toString() || "",
   paymentDate: new Date().toISOString().split("T")[0],
 })
-export function CustomerForm() {
-  const [open, setOpen] = useState(false)
+interface CustomerFormProps {
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
+}
+export const CustomerForm = ({ open, onOpenChange }: CustomerFormProps) => {
   const [formError, setFormError] = useState<string | null>(null)
   const [formData, setFormData] = useState({
     username: "",
@@ -129,7 +132,7 @@ export function CustomerForm() {
       // Reset form and close dialog
       setFormData(getInitialFormData(currentSeason?.amount))
       setFormError(null)
-      setOpen(false)
+      onOpenChange?.(false)
 
       // Refresh customers list
       if (currentSeason) dispatch(fetchCustomers(currentSeason._id))
@@ -151,7 +154,7 @@ export function CustomerForm() {
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>
         <Button className="gap-2">
           <Plus className="h-4 w-4" />
@@ -303,7 +306,7 @@ export function CustomerForm() {
             <Button type="submit" disabled={isLoading}>
               {isLoading ? "Creating..." : "Create Customer"}
             </Button>
-            <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+            <Button type="button" variant="outline" onClick={() => onOpenChange?.(false)}>
               Cancel
             </Button>
           </div>

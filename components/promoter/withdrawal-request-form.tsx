@@ -22,8 +22,13 @@ import type { AppDispatch, RootState } from "@/lib/store"
 import { fetchSeasons } from "@/lib/seasonSlice"
 import { fetchPromoterProfile } from "@/lib/promoter/authSlice"
 
-export function WithdrawalRequestForm({ hasPendingWithdrawal }: { hasPendingWithdrawal: boolean }) {
-  const [open, setOpen] = useState(false)
+interface WithdrawalRequestFormProps {
+  hasPendingWithdrawal: boolean
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
+}
+
+export function WithdrawalRequestForm({ hasPendingWithdrawal, open, onOpenChange }: WithdrawalRequestFormProps) {
   const [amount, setAmount] = useState("")
 
   const dispatch = useDispatch<AppDispatch>()
@@ -54,7 +59,7 @@ export function WithdrawalRequestForm({ hasPendingWithdrawal }: { hasPendingWith
       if(!currentSeason) return;
       await dispatch(requestWithdrawal({ amount: withdrawalAmount, seasonId: currentSeason._id })).unwrap()
       setAmount("")
-      setOpen(false)
+      onOpenChange?.(false)
       // Refresh earnings
       dispatch(fetchEarnings())
       dispatch(fetchWithdrawals())
@@ -75,7 +80,7 @@ export function WithdrawalRequestForm({ hasPendingWithdrawal }: { hasPendingWith
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>
         <Button className="gap-2" disabled={hasPendingWithdrawal}>
           <ArrowDownToLine className="h-4 w-4" />
@@ -128,7 +133,7 @@ export function WithdrawalRequestForm({ hasPendingWithdrawal }: { hasPendingWith
             <Button type="submit" disabled={isLoading || Number(amount) > earnings || !amount}>
               {isLoading ? "Processing..." : "Request Withdrawal"}
             </Button>
-            <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+            <Button type="button" variant="outline" onClick={() => onOpenChange?.(false)}>
               Cancel
             </Button>
           </div>
