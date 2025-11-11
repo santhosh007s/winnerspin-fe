@@ -77,7 +77,7 @@ export default function WalletPage() {
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 text-card-foreground">
-            <CardTitle className="text-sm font-medium text-card-foreground">Total Earnings</CardTitle>
+            <CardTitle className="text-sm font-medium text-card-foreground">Balance</CardTitle>
             <Wallet className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>

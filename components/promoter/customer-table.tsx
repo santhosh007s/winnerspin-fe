@@ -1,13 +1,14 @@
 "use client"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { format } from "date-fns"
 import { useDispatch, useSelector } from "react-redux"
 import Link from "next/link"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import * as XLSX from "xlsx"
+import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { Eye, Download } from "lucide-react"
+import { Eye, Download, Search } from "lucide-react"
 import { fetchCustomers } from "@/lib/user/customerSlice"
 import type { AppDispatch, RootState } from "@/lib/store"
 import { fetchSeasons } from "@/lib/seasonSlice"
@@ -15,6 +16,7 @@ import { fetchSeasons } from "@/lib/seasonSlice"
 export function CustomerTable() {
   const dispatch = useDispatch<AppDispatch>()
 
+  const [searchTerm, setSearchTerm] = useState("")
   const { customers, isLoading } = useSelector((state: RootState) => state.customer)
   const { currentSeason } = useSelector((state: RootState) => state.season)
   useEffect(() => {
@@ -25,13 +27,19 @@ export function CustomerTable() {
     }
   }, [dispatch, currentSeason])
 
+  const filteredCustomers = customers.filter(
+    (customer) =>
+      customer.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (customer.cardNo && customer.cardNo.toLowerCase().includes(searchTerm.toLowerCase())),
+  )
+
   const handleDownloadExcel = () => {
-    if (!customers.length) return
+    if (!filteredCustomers.length) return
 
     const tableHeaders = ["Name", "Card No", "Mobile", "Email", "City", "Joined Date"]
     const tableData: (string | number)[][] = [tableHeaders]
 
-    customers.forEach((customer) => {
+    filteredCustomers.forEach((customer) => {
       tableData.push([
         customer.username,
         customer.cardNo,
@@ -74,17 +82,30 @@ export function CustomerTable() {
 
   return (
     <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
-        <div>
-          <CardTitle>All Customers</CardTitle>
-        <CardDescription>Manage your customer database</CardDescription>
+      <CardHeader>
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="sm:w-1/4">
+            <CardTitle>All Customers</CardTitle>
+            <CardDescription>Manage your customer database</CardDescription>
+          </div>
+          <div className="flex gap-2 w-3/4">
+            <div className="relative flex-1 sm:flex-initial w-full">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
+              <Input
+                placeholder="Search by name or card..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 min-w-40 sm:w-full"
+              />
+            </div>
+            <Button onClick={handleDownloadExcel} variant="outline" size="sm" className="gap-2" disabled={filteredCustomers.length === 0}>
+              <Download className="h-4 w-4" /> Download Excel
+            </Button>
+          </div>
         </div>
-        <Button onClick={handleDownloadExcel} variant="outline" size="sm" className="gap-2" disabled={customers.length === 0}>
-          <Download className="h-4 w-4" /> Download Excel
-        </Button>
       </CardHeader>
       <CardContent>
-        {customers.length === 0 ? (
+        {filteredCustomers.length === 0 ? (
           <div className="text-center py-8">
             <p className="text-muted-foreground">No customers found. Add your first customer to get started.</p>
           </div>
@@ -103,7 +124,7 @@ export function CustomerTable() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {customers.map((customer) => (
+                {filteredCustomers.map((customer) => (
                   <TableRow key={customer._id}>
                     <TableCell className="font-medium">{customer.username}</TableCell>
                     <TableCell>{customer.email}</TableCell>
