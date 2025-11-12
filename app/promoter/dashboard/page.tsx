@@ -7,11 +7,23 @@ import { ThemeToggle } from "@/components/theme-toggle"
 import { StatsCards } from "@/components/promoter/stats-cards"
 import { NewPosterPopup } from "@/components/promoter/new-poster-popup"
 import { useSelector } from "react-redux"
-import type { RootState } from "@/lib/store"
+import type { AppDispatch, RootState } from "@/lib/store"
+import { useEffect } from "react"
+import { useDispatch } from "react-redux"
+import { fetchSeasons } from "@/lib/seasonSlice"
+import { fetchRepayments } from "@/lib/promoter/repaymentSlice"
 
 export default function PromoterDashboard() {
-  const { user } = useSelector((state: RootState) => state.auth)
   const { currentSeason } = useSelector((state: RootState) => state.season)
+
+  const dispatch = useDispatch<AppDispatch>()
+
+  useEffect(() => {
+    if (!currentSeason) dispatch(fetchSeasons());
+    // Fetch all dashboard stats data
+    else dispatch(fetchRepayments(currentSeason._id));
+  }, [currentSeason, dispatch])
+  const { user } = useSelector((state: RootState) => state.auth)
 
   const getSeasonDuration = () => {
     if (!currentSeason) return ""

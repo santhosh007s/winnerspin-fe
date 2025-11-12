@@ -186,11 +186,11 @@ const customerAuthSlice = createSlice({
         state.seasonId = action.payload.user.seasonId
         state.error = null
       })
-      .addCase(verifyToken.rejected, (state, action) => {
+      .addCase(verifyToken.rejected, (state) => {
         state.isLoading = false
         state.isAuthenticated = false
         state.user = null
-        state.error = (action.payload as string) || "Session expired. Please log in again."
+        // state.error = (action.payload as string) || "Session expired. Please log in again."
       })
       .addCase(updatePassword.fulfilled, (state) => {
         if (state.user) state.user.mustChangePassword = false

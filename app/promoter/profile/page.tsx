@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge"
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert"
 import { User, Mail, MapPin, CreditCard, Edit, Save, X } from "lucide-react"
 import { fetchPromoterProfile, logout, updatePromoterProfile } from "@/lib/promoter/authSlice"
+import { fetchRepayments } from "@/lib/promoter/repaymentSlice"
 import type { RootState, AppDispatch } from "@/lib/store"
 import { fetchSeasons } from "@/lib/seasonSlice"
 
@@ -27,16 +28,17 @@ export default function ProfilePage() {
   const [isFetchingPincode, setIsFetchingPincode] = useState(false)
   const { currentSeason } = useSelector((state: RootState) => state.season)
   const dispatch = useDispatch<AppDispatch>()
+  const { user, error: authError } = useSelector((state: RootState) => state.auth)
+  const { repayments } = useSelector((state: RootState) => state.repayment)
 
-  useEffect(() => { // This effect seems redundant due to the layout's logic, but we'll keep it for now.
+  useEffect(() => {
     if (currentSeason) {
       dispatch(fetchPromoterProfile(currentSeason._id))
+      dispatch(fetchRepayments(currentSeason._id))
     } else {
       dispatch(fetchSeasons())
     }
   }, [dispatch, currentSeason])
-  
-  const { user, error: authError } = useSelector((state: RootState) => state.auth)
 
   useEffect(() => {
     const fetchPincodeData = async () => {
@@ -331,7 +333,7 @@ export default function ProfilePage() {
           <div className="grid gap-4 md:grid-cols-3">
             <div>
               <p className="text-sm font-medium text-muted-foreground">Total Customers</p>
-              <p className="text-2xl font-bold text-primary">{user.customers?.length || 0}</p>
+              <p className="text-2xl font-bold text-primary">{repayments.length || 0}</p>
             </div>
             {user.status === "approved" && (
               <div>

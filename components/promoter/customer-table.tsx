@@ -88,7 +88,7 @@ export function CustomerTable() {
             <CardTitle>All Customers</CardTitle>
             <CardDescription>Manage your customer database</CardDescription>
           </div>
-          <div className="flex gap-2 w-3/4">
+          <div className="flex gap-2 w-full md:w-3/4">
             <div className="relative flex-1 sm:flex-initial w-full">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
               <Input
@@ -99,9 +99,9 @@ export function CustomerTable() {
               />
             </div>
             <Button onClick={handleDownloadExcel} variant="outline" size="sm" className="gap-2" disabled={filteredCustomers.length === 0}>
-              <Download className="h-4 w-4" /> Download Excel
+              <Download className="h-4 w-4" /><span className="hidden sm:block"> Download Excel</span>
             </Button>
-          </div>
+          </div>  
         </div>
       </CardHeader>
       <CardContent>
