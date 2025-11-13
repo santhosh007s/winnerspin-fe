@@ -2,13 +2,25 @@
 import { useEffect, useState } from "react"
 import { useSelector, useDispatch } from "react-redux"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogClose,
+} from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert"
-import { User, Mail, MapPin, CreditCard, Edit, Save, X } from "lucide-react"
-import { fetchPromoterProfile, logout, updatePromoterProfile } from "@/lib/promoter/authSlice"
+import { User, Mail, MapPin, CreditCard, Edit, Save, X, KeyRound } from "lucide-react"
+// You will need to create this `changePromoterPassword` thunk in your authSlice
+// It should take { currentPassword, newPassword } and make a PUT request to `/api/promoter/change-password`
+import { fetchPromoterProfile, logout, updatePromoterProfile, changePromoterPassword } from "@/lib/promoter/authSlice"
 import { fetchRepayments } from "@/lib/promoter/repaymentSlice"
 import type { RootState, AppDispatch } from "@/lib/store"
 import { fetchSeasons } from "@/lib/seasonSlice"
@@ -25,6 +37,11 @@ export default function ProfilePage() {
     pincode: "",
   })
   const [formError, setFormError] = useState<string | null>(null)
+  const [passwordData, setPasswordData] = useState({ currentPassword: "", newPassword: "", confirmPassword: "" })
+  const [passwordError, setPasswordError] = useState<string | null>(null)
+  const [passwordSuccess, setPasswordSuccess] = useState<string | null>(null)
+  const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false)
+
   const [isFetchingPincode, setIsFetchingPincode] = useState(false)
   const { currentSeason } = useSelector((state: RootState) => state.season)
   const dispatch = useDispatch<AppDispatch>()
@@ -124,6 +141,50 @@ export default function ProfilePage() {
 
   const handleLogout = () => {
     dispatch(logout())
+  }
+
+  const handlePasswordDialogOpenChange = (open: boolean) => {
+    setIsPasswordDialogOpen(open)
+    // If the dialog is being closed, reset its state
+    if (!open) {
+      setPasswordData({ currentPassword: "", newPassword: "", confirmPassword: "" })
+      setPasswordError(null)
+      setPasswordSuccess(null)
+    }
+  }
+
+  const handlePasswordChange = async () => {
+    setPasswordError(null)
+    setPasswordSuccess(null)
+
+    if (!passwordData.currentPassword || !passwordData.newPassword || !passwordData.confirmPassword) {
+      setPasswordError("All fields are required.")
+      return
+    }
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      setPasswordError("New passwords do not match.")
+      return
+    }
+    if (passwordData.newPassword.length < 6) {
+      setPasswordError("New password must be at least 6 characters long.")
+      return
+    }
+
+    try {
+      await dispatch(changePromoterPassword({
+        currentPassword: passwordData.currentPassword,
+        newPassword: passwordData.newPassword,
+      })).unwrap()
+      setPasswordSuccess("Password changed successfully!")
+      setPasswordData({ currentPassword: "", newPassword: "", confirmPassword: "" })
+      // Close the dialog after a short delay to show the success message
+      setTimeout(() => {
+        handlePasswordDialogOpenChange(false)
+      }, 1500)
+    } catch (err) {
+      if(err instanceof Error) setPasswordError(err.message);
+      else setPasswordError("Failed to change password. Please check your current password.")
+    }
   }
 
   if (!user) {
@@ -365,8 +426,58 @@ export default function ProfilePage() {
                 </AlertDescription>
               </Alert>
             )}
+            <div className="flex flex-wrap gap-2">
+              <Dialog open={isPasswordDialogOpen} onOpenChange={handlePasswordDialogOpenChange}>
+                <DialogTrigger asChild>
+                  <Button variant="outline" className="gap-2">
+                    <KeyRound className="h-4 w-4" />
+                    Change Password
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[425px]">
+                  <DialogHeader>
+                    <DialogTitle>Change Password</DialogTitle>
+                    <DialogDescription>Enter your current and new password. Click save when you&apos;re done.</DialogDescription>
+                  </DialogHeader>
+                  <div className="grid gap-4 py-4">
+                    {passwordError && (
+                      <Alert variant="destructive"><AlertDescription>{passwordError}</AlertDescription></Alert>
+                    )}
+                    {passwordSuccess && (
+                      <Alert><AlertDescription>{passwordSuccess}</AlertDescription></Alert>
+                    )}
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="currentPassword" className="text-right">
+                        Current
+                      </Label>
+                      <Input id="currentPassword" type="password" value={passwordData.currentPassword} onChange={(e) => setPasswordData({...passwordData, currentPassword: e.target.value})} className="col-span-3" />
+                    </div>
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="newPassword" className="text-right">
+                        New
+                      </Label>
+                      <Input id="newPassword" type="password" value={passwordData.newPassword} onChange={(e) => setPasswordData({...passwordData, newPassword: e.target.value})} className="col-span-3" />
+                    </div>
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="confirmPassword" className="text-right">
+                        Confirm
+                      </Label>
+                      <Input id="confirmPassword" type="password" value={passwordData.confirmPassword} onChange={(e) => setPasswordData({...passwordData, confirmPassword: e.target.value})} className="col-span-3" />
+                    </div>
+                  </div>
+                  <DialogFooter>
+                    <DialogClose asChild>
+                      <Button type="button" variant="secondary">
+                        Close
+                      </Button>
+                    </DialogClose>
+                    <Button type="button" onClick={handlePasswordChange} disabled={!!passwordSuccess}>
+                      Save changes
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
 
-            <div className="flex gap-2">
               <Button className="bg-destructive/10 border-destructive/20 text-destructive hover:bg-destructive/20 hover:text-destructive transition-colors justify-center" onClick={handleLogout}>
                 Sign Out
               </Button>

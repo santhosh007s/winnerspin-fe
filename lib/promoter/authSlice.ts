@@ -110,6 +110,39 @@ export const updatePromoterProfile = createAsyncThunk(
   },
 )
 
+export const changePromoterPassword = createAsyncThunk(
+  "auth/changePassword",
+  async ({ currentPassword, newPassword }: { currentPassword: string; newPassword: string }, { getState, rejectWithValue }) => {
+    const state = getState() as RootState
+    const token = state.auth.token
+    const seasonId = state.season.currentSeason?._id
+
+    if (!token || !seasonId) {
+      return rejectWithValue("Authentication error or no season selected.")
+    }
+
+    try {
+      const response = await fetch("/api/promoter/change-password", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          token: token,
+          seasonid: seasonId,
+        },
+        body: JSON.stringify({ currentPassword, newPassword }),
+      })
+
+      const data = await response.json()
+      if (!response.ok) {
+        return rejectWithValue(data.message || "Failed to change password.")
+      }
+      return data.message
+    } catch (error) {
+      return rejectWithValue(error instanceof Error ? error.message : "An unknown error occurred.")
+    }
+  },
+)
+
 const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -156,6 +189,18 @@ const authSlice = createSlice({
       .addCase(updatePromoterProfile.rejected, (state, action) => {
         state.isLoading = false
         state.error = (action.payload as string) || "Failed to update profile"
+      })
+      .addCase(changePromoterPassword.pending, (state) => {
+        state.isLoading = true
+        state.error = null
+      })
+      .addCase(changePromoterPassword.fulfilled, (state) => {
+        state.isLoading = false
+        // No need to update user state, the component handles success message
+      })
+      .addCase(changePromoterPassword.rejected, (state, action) => {
+        state.isLoading = false
+        state.error = (action.payload as string) || "Failed to change password"
       })
   },
 })
