@@ -125,6 +125,7 @@ export const CustomerForm = ({ open, onOpenChange }: CustomerFormProps) => {
         createCustomer({
           ...formData,
           firstPayment: Number(formData.firstPayment),
+          status: "approved",
           seasonId: currentSeason._id,
         }),
       ).unwrap()

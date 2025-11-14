@@ -8,6 +8,7 @@ interface Customer {
   mobile: string
   cardNo: string
   state: string
+  status: "approved" | "pending"| "rejected"
   city: string
   address: string
   pincode: string

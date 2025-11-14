@@ -17,6 +17,7 @@ export function CustomerTable() {
   const dispatch = useDispatch<AppDispatch>()
 
   const [searchTerm, setSearchTerm] = useState("")
+  const [view, setView] = useState<"approved" | "rejected">("approved")
   const { customers, isLoading } = useSelector((state: RootState) => state.customer)
   const { currentSeason } = useSelector((state: RootState) => state.season)
   useEffect(() => {
@@ -27,11 +28,12 @@ export function CustomerTable() {
     }
   }, [dispatch, currentSeason])
 
-  const filteredCustomers = customers.filter(
-    (customer) =>
-      customer.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (customer.cardNo && customer.cardNo.toLowerCase().includes(searchTerm.toLowerCase())),
-  )
+  const filteredCustomers = customers
+    .filter((customer) => (view === "rejected" ? customer.status === "rejected" : customer.status !== "rejected"))
+    .filter(
+      (customer) =>
+        customer.username.toLowerCase().includes(searchTerm.toLowerCase()) || (customer.cardNo && customer.cardNo.toLowerCase().includes(searchTerm.toLowerCase())),
+    )
 
   const handleDownloadExcel = () => {
     if (!filteredCustomers.length) return
@@ -85,8 +87,16 @@ export function CustomerTable() {
       <CardHeader>
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="sm:w-1/4">
-            <CardTitle>All Customers</CardTitle>
+            <CardTitle>{view === "approved" ? "All Customers" : "Rejected Customers"}</CardTitle>
             <CardDescription>Manage your customer database</CardDescription>
+            <div className="flex gap-2 mt-2">
+              <Button onClick={() => setView("approved")} variant={view === "approved" ? "default" : "outline"} size="sm">
+                Approved
+              </Button>
+              <Button onClick={() => setView("rejected")} variant={view === "rejected" ? "default" : "outline"} size="sm">
+                Rejected
+              </Button>
+            </div>
           </div>
           <div className="flex gap-2 w-full md:w-3/4">
             <div className="relative flex-1 sm:flex-initial w-full">
@@ -101,7 +111,7 @@ export function CustomerTable() {
             <Button onClick={handleDownloadExcel} variant="outline" size="sm" className="gap-2" disabled={filteredCustomers.length === 0}>
               <Download className="h-4 w-4" /><span className="hidden sm:block"> Download Excel</span>
             </Button>
-          </div>  
+          </div>
         </div>
       </CardHeader>
       <CardContent>
